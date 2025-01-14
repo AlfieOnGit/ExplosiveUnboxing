@@ -8,47 +8,44 @@ UCLASS(BlueprintType)
 class EXPLOSIVEUNBOXING_API ULogic : public UObject
 {
     GENERATED_BODY()
-
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Logic")
-    UCondition* condition;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Logic")
-    UStatement* statement;
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType, Category = "Hints")
 enum class Conditions : uint8
 {
     IF UMETA(DisplayName = "If N"),
-    OR UMETA(DisplayName = "Or N"),
+    WHILE UMETA(DisplayName = "While N"),
     MAX
 };
 
-UENUM(BlueprintType)
-enum class Statements : uint8
+UENUM(BlueprintType, Category = "Hints")
+enum class Conjunctives : uint8
 {
-    THEN UMETA(DisplayName = "It is N"),
-    NOT UMETA(DisplayName = "It is not N"),
+    OR UMETA(DisplayName = "Or"),
+    AND UMETA(DisplayName = "And"),
     MAX
 };
 
+UENUM(BlueprintType, Category = "Hints")
+enum class Subject : uint8
+{
+    SOLUTION UMETA(DisplayName = "Solution"),
+    DANGER UMETA(DisplayName = "Danger"),   
+    MAX
+};
 
 UCLASS(BlueprintType)
-class EXPLOSIVEUNBOXING_API UStatement : public UObject
+class EXPLOSIVEUNBOXING_API USubjects: public ULogic
 {
     GENERATED_BODY()
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
-    int32 probability;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
-    Statements statement;
+    Subject subject;
 };
 
 UCLASS(BlueprintType)
-class EXPLOSIVEUNBOXING_API UCondition : public UObject
+class EXPLOSIVEUNBOXING_API UCondition : public ULogic
 {
     GENERATED_BODY()
 
@@ -56,6 +53,54 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
     Conditions condition;
 };
+UCLASS(BlueprintType)
+class EXPLOSIVEUNBOXING_API UConjunctive : public ULogic
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    Conjunctives conjunctive;
+};
+
+
+
+UENUM(BlueprintType, Category = "Hints")
+enum class Statements : uint8
+{
+    EQUAL UMETA(DisplayName = "CASENUMBER is P"),
+    NOT UMETA(DisplayName = "CASENUMBER is not P"),
+
+    GREATER UMETA(DisplayName = "N is greater than CASENUMBER"),
+    LESS UMETA(DisplayName = "N is less than CASENUMBER"),
+
+    LYING UMETA(DisplayName = "CASENUMBER is lying"),
+    TRUTHFUL UMETA(DisplayName = "CASENUMBER is truthful"),
+
+    PLUSOFFSET UMETA(DisplayName = "CASENUMBER is P plus NUMBER"),
+    NEGATIVEOFFSET UMETA(DisplayName = "CASENUMBER is P negative NUMBER"),
+
+
+    MAX
+};
+
+
+UCLASS(BlueprintType)
+class EXPLOSIVEUNBOXING_API UStatement : public ULogic
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    UStatement* inverse;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    int32 probability;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    TArray<USubjects*> subjects;
+};
+
 
 
 UCLASS(BlueprintType)
