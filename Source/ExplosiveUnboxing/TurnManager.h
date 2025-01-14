@@ -14,8 +14,7 @@ class EXPLOSIVEUNBOXING_API UTurnManager : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	UTurnManager();
-
+	UTurnManager() = default;
 // protected:
 // 	// Called when the game starts
 // 	virtual void BeginPlay() override;
