@@ -15,13 +15,14 @@ public class EditorToolsModule : ModuleRules
                 "PropertyEditor",    
                 "Slate",
                 "SlateCore",
-                "EditorStyle"     
+                "EditorStyle"
             });
 
             PrivateDependencyModuleNames.AddRange(new string[]
             {
                 "InputCore",
-                "Projects"
+                "Projects",
+                "ExplosiveUnboxing"
             });
         }
     }

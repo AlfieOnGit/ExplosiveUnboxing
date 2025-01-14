@@ -11,10 +11,6 @@ public class ExplosiveUnboxing : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "PropertyEditor" });
-
-        if (Target.bBuildEditor)
-            PrivateDependencyModuleNames.AddRange(new string[] { "EditorToolsModule"});
-
         PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 
         // Uncomment if you are using online features
