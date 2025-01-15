@@ -19,10 +19,6 @@ TArray<FUCaseHint> UHintManager::GetLevelHints(TArray<int32> caseNumbers, int32 
     for (int i = 0; i < ChosenHints.Num(); i++)
     {
         UHint* hintType = SelectHint(HintData);
-
-        FUCaseHint NewCaseHint;
-        NewCaseHint.hint = hintType;
-        NewCaseHint.caseReference = 7;
     }
 
     return ChosenHints;

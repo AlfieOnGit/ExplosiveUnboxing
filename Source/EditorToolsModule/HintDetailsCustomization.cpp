@@ -32,12 +32,12 @@ void FHintDetailsCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBui
 
 
     TArray<TSharedPtr<FText>> ConditionOptions;
-    UEnum* Enum = StaticEnum<Conditions>();
+    UEnum* Enum = StaticEnum<LogicTypes>();
     if (Enum)
     {
-        for (int32 i = 0; i < (int32)Conditions::MAX; ++i)
+        for (int32 i = 0; i < (int32)LogicTypes::MAX; ++i)
         {
-            if (i == (int32)Conditions::MAX)
+            if (i == (int32)LogicTypes::MAX)
                 continue;
 
             ConditionOptions.Add(MakeShared<FText>(Enum->GetDisplayNameTextByIndex(i)));
@@ -56,39 +56,49 @@ void FHintDetailsCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBui
         {
             if (MyObject.IsValid())
             {
-                UStatement* MyStatement = NewObject<UStatement>();
-                //MyStatement->probability = 50;
-               // MyStatement->statement = Statements::EQUAL;
+                ULogicData* MyLogic = NewObject<ULogicData>();
+                MyLogic->LogicStatement = LogicNamespace::Truthful;
 
-                MyObject->logic.Add(MyStatement);
+                MyObject->logic.Add(MyLogic);
             }
             return FReply::Handled();
         };
 
+
+
     Category.AddCustomRow(LOCTEXT("MyButtonRowFilterString", "Search Filter Keywords"))
         .WholeRowContent()
         [
+            SNew(SHorizontalBox) + SHorizontalBox::Slot()
+            [
+                SNew(SComboBox<TSharedPtr<FText>>)
+                    .OptionsSource(&ConditionOptions)
+                    .OnSelectionChanged_Lambda([MyObject](TSharedPtr<FText> NewSelection, ESelectInfo::Type SelectInfo)
+                        {
+
+                            if (MyObject.IsValid())
+                            {
+                                ULogicData* MyLogic = NewObject<ULogicData>();
+                                if (!MyLogic)
+                                {
+                                    UE_LOG(LogTemp, Error, TEXT("Failed to create ULogicData!"));
+                                    return;
+                                }
+                                MyLogic->LogicStatement = LogicNamespace::Truthful;
+                                MyObject->logic.Add(MyLogic);
+                            }
+                        })
+                    .Content()
+                    [
+                        SNew(STextBlock).Text_Lambda([ConditionOptions]() { return *ConditionOptions[0]; })
+
+                    ]
+            ]
+            + SHorizontalBox::Slot().Padding(5, 0)
+            [
             SNew(SButton)
                 .Text(LOCTEXT("RegenerateBtnText", "Regenerate List"))
                 .OnClicked_Lambda(OnRegenerate)
+            ]
         ];
-
-    /*Category.AddCustomRow(FText::FromString("Select Condition"))
-        .ValueContent()
-        [
-            SNew(SComboBox<TSharedPtr<FText>>)
-                .OptionsSource(&ConditionOptions)
-                .OnSelectionChanged_Lambda([this](TSharedPtr<FText> NewSelection, ESelectInfo::Type SelectInfo)
-                    {
-                        if (NewSelection.IsValid())
-                        {
-                            // To do
-                        }
-                    })
-                .Content()
-                [
-                    SNew(STextBlock)
-                        .Text(FText::FromString("Select a condition"))
-                ]
-        ];*/
 }
