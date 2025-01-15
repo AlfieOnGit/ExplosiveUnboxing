@@ -5,14 +5,14 @@
 
 void AAPlayerController::SetupInputComponent()
 {
-	Super::SetupInputComponent();
+	/*Super::SetupInputComponent();
 
 	/*
 	if (WasInputKeyJustPressed(EKeys::AnyKey)) {
 		UE_LOG(LogTemp, Display, TEXT("Test"));
-	}*/
+	}
 
-	InputComponent->BindAction("My Action", EInputEvent::IE_Pressed, this, AAPlayerController::KeyPressed);
+	InputComponent->BindAction("My Action", EInputEvent::IE_Pressed, this, &AAPlayerController::KeyPressed);*/
 }
 
 void AAPlayerController::KeyPressed(FKey key)

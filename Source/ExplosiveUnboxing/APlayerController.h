@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class EXPLOSIVEUNBOXING_API AAPlayerController : public APlayerController
 {
 	GENERATED_BODY()
