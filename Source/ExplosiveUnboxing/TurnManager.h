@@ -23,16 +23,22 @@ public:
 // 	// Called every frame
 // 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	int GetBriefcaseCount() const { return CaseCount; }
 	
 	/**
 	 * Adds a new briefcase to the end of the briefcase array
 	 * @param Briefcase New briefcase
 	 */
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	void AppendCase(UBriefcase* Briefcase) { Cases[CaseCount++] = Briefcase; }
 
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	void SetCase(int const Index, UBriefcase* Briefcase) { Cases[Index] = Briefcase; }
-	[[nodiscard]] UBriefcase* GetCase(int const Index) const { return Cases[Index]; }
+
+	[[nodiscard]]
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	UBriefcase* GetCase(int const Index) const { return Cases[Index]; }
 
 protected:
 	unsigned int CaseCount = 0;
