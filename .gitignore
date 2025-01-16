@@ -72,3 +72,10 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+/Source/ExplosiveUnboxing/Private/SoundFXComponent.cpp
+/Source/ExplosiveUnboxing/Private/SoundFXComponent.cpp
+/Source/ExplosiveUnboxing/Public/SoundFXComponent.h
+/Content/StarterContent/Architecture/Floor_400x400.uasset
+/Source/ExplosiveUnboxing/Private/SpriteComponent.cpp
+/Source/ExplosiveUnboxing/Public/SpriteComponent.h
+/ExplosiveUnboxing.uproject
