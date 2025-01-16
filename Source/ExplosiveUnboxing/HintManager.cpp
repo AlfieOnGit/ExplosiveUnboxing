@@ -135,39 +135,29 @@ bool SolveForEqual(TArray<ULogicData*>& AllIdentifiers, TArray<ULogicData*>& All
         {
             if (!IsNot)
                 newSubjectValue = CaseSolution; 
-            else {
-                if (!SetCaseNumberSafeRand(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
-                    return false;
-            }
+            else if (IsNot && !SetCaseNumberSafeRand(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
+                return false;
         }
         else if (MyRole == &LogicNamespace::Safe)
         {
-            if (!IsNot) {
-                if (!SetCaseNumberSafeRand(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
-                    return false;
-            }
-            else
+            if (!IsNot && !SetCaseNumberSafeRand(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
+               return false;
+            else if (IsNot)
                 newSubjectValue = CaseSolution;
         }
         else if (MyRole == &LogicNamespace::Lying)
         {
-            if (!IsNot) {
-                if (!SetCaseNumberLiarRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
-                    return false;
-            }
-            else
-                if (!SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
-                    return false;
+            if (!IsNot && !SetCaseNumberLiarRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
+                return false;
+            else if (IsNot && !SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
+                return false;
         }
         else if (MyRole == &LogicNamespace::Truthful)
         {
-            if (!IsNot) {
-                if (!SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
-                    return false;
-            }
-            else
-                if (!SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
-                    return false;
+            if (!IsNot && !SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
+                return false;
+            else if (IsNot && !SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
+                return false;
         }
     }
     else if (MyIdentifier == &LogicNamespace::Lying)
@@ -198,48 +188,32 @@ bool SolveForGreater(TArray<ULogicData*>& AllIdentifiers, TArray<ULogicData*>& A
     {
         if (MyRole == &LogicNamespace::Danger) // Above Case Number is Danger
         {                
-            if (!IsNot) {
-                if (!GetCaseNumberBelowDanager(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
+            if (!IsNot && !GetCaseNumberBelowDanager(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
                     return false;
-            }
-            else
-                if (!GetCaseNumberAboveDanger(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
-                    return false;           
+            else if (IsNot && !GetCaseNumberAboveDanger(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
+                return false;           
         }
         else if (MyRole == &LogicNamespace::Safe) // Above Case Number is Safety
         {
-            if (!IsNot) {
-                if (!GetCaseNumberAboveDanger(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
+            if (!IsNot && !GetCaseNumberAboveDanger(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
                     return false;
-            }
-            else
-                if (!GetCaseNumberBelowDanager(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
-                    return false;
+            else if (IsNot && !GetCaseNumberBelowDanager(CaseNumbers, &newSubjectValue, HintCount, CaseSolution))
+                return false;
         }
-        // Above Case Number is Liar
-        else if (MyRole == &LogicNamespace::Lying)
+        else if (MyRole == &LogicNamespace::Lying) // Above Case Number is Liar
         {
-            if (!IsNot) { 
-                if (!SetCaseNumberLiarRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
+            if (!IsNot && !SetCaseNumberLiarRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
                     return false;
-            }
-            else
-                if (!SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
-                    return false;
+            else if (IsNot && !SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
+                return false;
         }
-
-        // Above Case Number is a Truthful Case
-        else if (MyRole == &LogicNamespace::Truthful)
+        else if (MyRole == &LogicNamespace::Truthful) // Above Case Number is a Truthful Case
         {
-            if (!IsNot) {
-                if (!SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
+            if (!IsNot && !SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
                     return false;
-            }
-            else
-                if (!SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
-                    return false;
+            else if (IsNot && !SetCaseNumberTruthfulRand(Liars, TruthTellers, CaseNumbers, &newSubjectValue, HintCount, MaxLiarCount))
+                return false;
         }
-
     }
     else if (MyIdentifier == &LogicNamespace::Lying)
     {
@@ -256,7 +230,6 @@ bool SolveForStatement(int j, FLogic* LogicStatement, TArray<int32>& CaseNumbers
     TArray<bool>& Liars, TArray<bool>& TruthTellers, int32* SkipCount, bool InConditionLoop, bool IsNot, int32 MaxLiarCount, int32 CaseSolution, 
     int32 HintCount, int32 LogicSize)
 {
-
     if (InConditionLoop)
         return false; // THIS IS A REMINDED TO SOLVE FOR THIS CASE NOT THE INTENTIONAL FUNCTIONALITY
 
@@ -351,7 +324,6 @@ bool CreateHint(int i, FUCaseHint* NewCaseHint, TArray<int32> CaseNumbers, int32
             break;
         }
     }
-
     NewCaseHint->hint = HintType;
     NewCaseHint->SubjectData = NewSubjectData;
     NewCaseHint->hintText = "";
