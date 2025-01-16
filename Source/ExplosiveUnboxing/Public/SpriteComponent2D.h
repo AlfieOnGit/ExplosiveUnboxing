@@ -19,12 +19,19 @@ public:
     // Sets default values for this actor's properties
     USpriteComponent2D();
 
+    UFUNCTION()
+    void OnEventResponse(UPaperSprite* NewSprite);
+
+    // Bind to event (delegate needs to be #included (probably a game manager class??))
+    // Also event should contain a sprite but that could be modified if needed
+    //void BindToEvent(CustomEvent* EventTrigger);
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sprite")
     UPaperSpriteComponent* SpriteComponent;
 
 public:
     // Function to set / update sprite
-    //UFUNCTION(BlueprintCallable, Category = "Sprite")
+    
     bool SetSprite(UPaperSprite* NewSprite);
 };

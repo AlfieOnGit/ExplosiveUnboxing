@@ -12,6 +12,11 @@ USpriteComponent2D::USpriteComponent2D()
     }
 }
 
+void USpriteComponent2D::OnEventResponse(UPaperSprite* NewSprite)
+{
+    SetSprite(NewSprite);
+}
+
 // Change the sprite
 bool USpriteComponent2D::SetSprite(UPaperSprite* NewSprite)
 {
@@ -22,3 +27,13 @@ bool USpriteComponent2D::SetSprite(UPaperSprite* NewSprite)
     }
     return false;
 }
+
+/*
+void USpriteComponent2D::BindToEvent(CustomEvent* EventTrigger)
+{
+    if (EventTrigger)
+    {
+        EventTrigger->OnCustomEventTriggered.AddDynamic(this, &USpriteComponent2D::OnCustomEventResponse);
+    }
+}
+*/
