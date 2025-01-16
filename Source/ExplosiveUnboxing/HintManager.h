@@ -22,6 +22,4 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	UHint* SelectHint(UHintCollection* HintData);
-
 };

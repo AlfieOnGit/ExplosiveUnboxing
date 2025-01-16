@@ -57,7 +57,7 @@ void FHintDetailsCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBui
             if (MyObject.IsValid())
             {
                 ULogicData* MyLogic = NewObject<ULogicData>();
-                MyLogic->LogicStatement = LogicNamespace::Truthful;
+                MyLogic->LogicStatement = &LogicNamespace::Truthful;
 
                 MyObject->logic.Add(MyLogic);
             }
@@ -75,17 +75,16 @@ void FHintDetailsCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBui
                     .OptionsSource(&ConditionOptions)
                     .OnSelectionChanged_Lambda([MyObject](TSharedPtr<FText> NewSelection, ESelectInfo::Type SelectInfo)
                         {
-
                             if (MyObject.IsValid())
                             {
-                                ULogicData* MyLogic = NewObject<ULogicData>();
+                                /*ULogicData* MyLogic = NewObject<ULogicData>();
                                 if (!MyLogic)
                                 {
                                     UE_LOG(LogTemp, Error, TEXT("Failed to create ULogicData!"));
                                     return;
                                 }
                                 MyLogic->LogicStatement = LogicNamespace::Truthful;
-                                MyObject->logic.Add(MyLogic);
+                                MyObject->logic.Add(MyLogic);*/
                             }
                         })
                     .Content()
