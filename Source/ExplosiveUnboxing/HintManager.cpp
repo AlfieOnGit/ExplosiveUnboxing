@@ -204,6 +204,99 @@ bool GetRoles(TArray<ULogicData*>& AllIdentifiers, TArray<ULogicData*>& AllRoles
     return true;
 }
 
+bool IsPlayerVisible(FLogic* MyIdentifier)
+{
+    const FLogicIdentifier* OtherIdentifier = static_cast<const FLogicIdentifier*>(MyIdentifier);
+    return OtherIdentifier->PlayerVisible;
+}
+
+void AddBasisText(TArray<FString>& Text, TArray<int32>& BasisIndexes, bool IsNot)
+{
+    Text.Add("" + IsNot);
+    BasisIndexes.Add(Text.Num() - 1);
+}
+
+bool GetBoolFromText(const TArray<FString>& Text, int32 Index)
+{
+    if (Text.IsValidIndex(Index)) 
+    {
+        const FString& Value = Text[Index];
+        return Value == "1" || Value.ToLower() == "true";
+    }
+    return false; 
+}
+
+// Given example Case Number X, This function adds a marker to add X to X & set it when all X's are known
+// Given a logic statment can fail, all values of X are not set till later
+void AddIdentifyingRoleText(TArray<FString>& Text, TArray<int32>& SubjectIndexes, ULogicData* MyIdentifier)
+{
+    auto Role = MyIdentifier->LogicStatement;
+    Text.Add(Role->DisplayLogic);
+
+    if (Role->LogicType == LogicTypes::Identifiers)
+    {
+        if (IsPlayerVisible(Role)) {
+            Text.Add("Subject");
+            SubjectIndexes.Add(Text.Num() - 1);
+        }    
+        else 
+            SubjectIndexes.Add(-1);
+    }
+}
+
+void AddText(TArray<FString>& Text, TArray<int32>& BasisIndexes, TArray<int32>& SubjectIndexes, LogicStatmentTypes StatementType, 
+    TArray<ULogicData*>& MyRole, TArray<ULogicData*>& MyIdentifiers, bool IsNot)
+{
+    switch (StatementType)
+    {
+        case (LogicStatmentTypes::Is):
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyIdentifiers[0]);
+            AddBasisText(Text, BasisIndexes, IsNot);
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyRole[0]);
+            break;
+        case (LogicStatmentTypes::IsGreater):
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyIdentifiers[0]);
+            AddBasisText(Text, BasisIndexes, IsNot);
+            Text.Add("above ");
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyRole[0]);
+            break;
+        case (LogicStatmentTypes::IsLess):
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyIdentifiers[0]);
+            AddBasisText(Text, BasisIndexes, IsNot);
+            Text.Add("below ");
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyRole[0]);
+            break;
+        case (LogicStatmentTypes::IsBetween):            
+            Text.Add("Between ");
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyIdentifiers[0]);
+            Text.Add("and ");
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyIdentifiers[1]);
+            AddBasisText(Text, BasisIndexes, IsNot);
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyRole[0]);
+            break;
+        case (LogicStatmentTypes::IsPosOffset):
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyIdentifiers[0]);
+            Text.Add("plus ");
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyIdentifiers[1]);
+            AddBasisText(Text, BasisIndexes, IsNot);
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyRole[0]);
+            break;
+        case (LogicStatmentTypes::IsNegOffset):
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyIdentifiers[0]);
+            Text.Add("minus ");
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyIdentifiers[1]);
+            AddBasisText(Text, BasisIndexes, IsNot);
+            AddIdentifyingRoleText(Text, SubjectIndexes, MyRole[0]);
+            break;
+        default:
+            break;
+    }
+
+
+    // Subject1 is a Liar
+    // Subject2 is Honest
+}
+
 bool CaseNumberEquals(FLogic* MyRole, int32* newSubjectValue, TArray<int32>& CaseNumbers, TArray<bool>& Liars, 
     TArray<bool>& TruthTellers, bool IsNot, int32 CaseSolution, int32 HintCount, int32 MaxLiarCount)
 {
@@ -312,7 +405,7 @@ bool CaseNumberGreater(FLogic* MyRole, TArray<int32>& NewSubjectData, TArray<int
     }
     else if (MyRole == &LogicNamespace::Lying) // Above Case Number is Liar
     {
-        *SubjectCount++;
+        ++*SubjectCount;
         if (!GetLyingCase(Liars, TruthTellers, CaseNumbers, &FirstSubject, HintCount, MaxLiarCount))
             return false;
 
@@ -325,7 +418,7 @@ bool CaseNumberGreater(FLogic* MyRole, TArray<int32>& NewSubjectData, TArray<int
     }
     else if (MyRole == &LogicNamespace::Truthful) // Above Case Number is a Truthful Case
     {
-        *SubjectCount++;
+        ++*SubjectCount;
         if (!GetTruthfulCase(Liars, TruthTellers, CaseNumbers, &FirstSubject, HintCount))
             return false;
 
@@ -341,11 +434,13 @@ bool CaseNumberGreater(FLogic* MyRole, TArray<int32>& NewSubjectData, TArray<int
 }
 
 bool SolveForEqual(TArray<ULogicData*>& AllIdentifiers, TArray<ULogicData*>& AllRoles, FLogic* LogicStatement, TArray<int32>& CaseNumbers, TArray<int32>& NewSubjectData,
-    TArray<bool>& Liars, TArray<bool>& TruthTellers, bool IsNot, int32 MaxLiarCount, int32 CaseSolution, int32 HintCount) 
+    TArray<bool>& Liars, TArray<bool>& TruthTellers, TArray<FString>& Text, TArray<int32>& BasisIndexes, TArray<int32>& SubjectIndexes, int32* SubjectCount, bool IsNot, int32 MaxLiarCount, int32 CaseSolution, int32 HintCount)
 {
     auto MyIdentifier = AllIdentifiers[0]->LogicStatement;
     auto MyRole = AllRoles[0]->LogicStatement;
     int32 newSubjectValue;
+
+    AddText(Text, BasisIndexes, SubjectIndexes, LogicStatmentTypes::Is, AllRoles, AllIdentifiers, IsNot);
 
     if (MyIdentifier == &LogicNamespace::CaseNumber && !CaseNumberEquals(MyRole, &newSubjectValue, CaseNumbers, Liars, TruthTellers, IsNot, CaseSolution, HintCount, MaxLiarCount))
         return false;
@@ -365,26 +460,47 @@ bool SolveForEqual(TArray<ULogicData*>& AllIdentifiers, TArray<ULogicData*>& All
 }
 
 bool SolveForGreater(TArray<ULogicData*>& AllIdentifiers, TArray<ULogicData*>& AllRoles, FLogic* LogicStatement, TArray<int32>& CaseNumbers, TArray<int32>& NewSubjectData,
-    TArray<bool>& Liars, TArray<bool>& TruthTellers, int32* SubjectCount, bool IsNot, int32 MaxLiarCount, int32 CaseSolution, int32 HintCount)
+    TArray<bool>& Liars, TArray<bool>& TruthTellers, TArray<FString>& Text, TArray<int32>& BasisIndexes, TArray<int32>& SubjectIndexes, int32* SubjectCount, bool IsNot, int32 MaxLiarCount, int32 CaseSolution, int32 HintCount)
 {
     auto MyIdentifier = AllIdentifiers[0]->LogicStatement;
     auto MyRole = AllRoles[0]->LogicStatement;
+
+    AddText(Text, BasisIndexes, SubjectIndexes, LogicStatmentTypes::IsGreater, AllRoles, AllIdentifiers, IsNot);
 
     if (MyIdentifier == &LogicNamespace::CaseNumber && !CaseNumberGreater(MyRole, NewSubjectData, CaseNumbers, Liars, TruthTellers, SubjectCount, IsNot, CaseSolution, HintCount, MaxLiarCount))
         return false;
     else if (MyIdentifier == &LogicNamespace::Lying)
     {
+        return false;
         // [EXTENSION] Not required for Jam scope
         // Find or create a Liar that makes this statement true
-        // e.g A Liar is Above a Safe case, A Liar is above Danger, A Liar is Above Case11
+        // e.g A Liar is Above a Safe case, A Liar is above Danger, A Liar is Above Case 11
     } 
     // As some Statements Require two data subjects they are added in Logic Functions
     return true;
 }
 
+bool SolveForLess(TArray<ULogicData*>& AllIdentifiers, TArray<ULogicData*>& AllRoles, FLogic* LogicStatement, TArray<int32>& CaseNumbers, TArray<int32>& NewSubjectData,
+    TArray<bool>& Liars, TArray<bool>& TruthTellers, TArray<FString>& Text, TArray<int32>& BasisIndexes, TArray<int32>& SubjectIndexes, int32* SubjectCount, bool IsNot, int32 MaxLiarCount, int32 CaseSolution, int32 HintCount)
+{
+    auto MyIdentifier = AllIdentifiers[0]->LogicStatement;
+    auto MyRole = AllRoles[0]->LogicStatement;
+
+    AddText(Text, BasisIndexes, SubjectIndexes, LogicStatmentTypes::IsLess, AllRoles, AllIdentifiers, IsNot);
+    IsNot = !IsNot; // Using !IsNot to use Greater logic as Less than logic (only modifies IsNot as copy)
+
+    if (MyIdentifier == &LogicNamespace::CaseNumber && !CaseNumberGreater(MyRole, NewSubjectData, CaseNumbers, Liars, TruthTellers, SubjectCount, IsNot, CaseSolution, HintCount, MaxLiarCount))
+        return false;
+    else if (MyIdentifier == &LogicNamespace::Lying)
+    {
+        return false;
+    }
+    return true;
+}
+
 bool SolveForStatement(int j, FLogic* LogicStatement, TArray<int32>& CaseNumbers, TArray<int32>& NewSubjectData, TArray<ULogicData*>& LogicArray,
-    TArray<bool>& Liars, TArray<bool>& TruthTellers, int32* SkipCount, int32* SubjectCount, bool InConditionLoop, bool IsNot, int32 MaxLiarCount, int32 CaseSolution,
-    int32 HintCount, int32 LogicSize)
+    TArray<bool>& Liars, TArray<bool>& TruthTellers, TArray<FString>& Text, TArray<int32>& BasisIndexes, TArray<int32>& SubjectIndexes, 
+    int32* SkipCount, int32* SubjectCount, bool InConditionLoop, bool IsNot, int32 MaxLiarCount, int32 CaseSolution, int32 HintCount, int32 LogicSize)
 {
     const FLogicStatement* LogicEquation = static_cast<const FLogicStatement*>(LogicStatement);
     auto IdentifierCount = LogicEquation->IdentifierCount;
@@ -395,12 +511,11 @@ bool SolveForStatement(int j, FLogic* LogicStatement, TArray<int32>& CaseNumbers
 
     if (!GetRoles(AllIdentifiers, AllRoles, LogicArray, RolesCount, IdentifierCount, j, LogicSize))
         return false;
-    if (LogicStatement == &LogicNamespace::Equal && !SolveForEqual(AllIdentifiers, AllRoles, LogicStatement, CaseNumbers, NewSubjectData, Liars, TruthTellers, IsNot, MaxLiarCount, CaseSolution, HintCount))
+    if (LogicStatement == &LogicNamespace::Equal && !SolveForEqual(AllIdentifiers, AllRoles, LogicStatement, CaseNumbers, NewSubjectData, Liars, TruthTellers, Text, BasisIndexes, SubjectIndexes, SubjectCount, IsNot, MaxLiarCount, CaseSolution, HintCount))
         return false;
-    else if (LogicStatement == &LogicNamespace::Greater && !SolveForGreater(AllIdentifiers, AllRoles, LogicStatement, CaseNumbers, NewSubjectData, Liars, TruthTellers, SubjectCount, IsNot, MaxLiarCount, CaseSolution, HintCount))
+    else if (LogicStatement == &LogicNamespace::Greater && !SolveForGreater(AllIdentifiers, AllRoles, LogicStatement, CaseNumbers, NewSubjectData, Liars, TruthTellers, Text, BasisIndexes, SubjectIndexes, SubjectCount, IsNot, MaxLiarCount, CaseSolution, HintCount))
         return false;
-    // Using !IsNot to switch Greater logic to Less than logic (only modifies IsNot copy)
-    else if (LogicStatement == &LogicNamespace::Less && !SolveForGreater(AllIdentifiers, AllRoles, LogicStatement, CaseNumbers, NewSubjectData, Liars, TruthTellers, SubjectCount, !IsNot, MaxLiarCount, CaseSolution, HintCount))
+    else if (LogicStatement == &LogicNamespace::Less && !SolveForLess(AllIdentifiers, AllRoles, LogicStatement, CaseNumbers, NewSubjectData, Liars, TruthTellers, Text, BasisIndexes, SubjectIndexes, SubjectCount, IsNot, MaxLiarCount, CaseSolution, HintCount))
         return false;
     else if (LogicStatement == &LogicNamespace::Between)
         return false;
@@ -413,20 +528,28 @@ bool SolveForStatement(int j, FLogic* LogicStatement, TArray<int32>& CaseNumbers
     return true;
 }
 
-bool CreateHint(int i, FUCaseHint* NewCaseHint, TArray<int32> CaseNumbers, int32 CaseSolution, UHintCollection* HintData, int32 HintCount, TArray<bool>& Liars, TArray<bool>& TruthTellers) {
-
-    UHint* HintType = SelectHint(HintData);
+bool CreateHint(int i, FUCaseHint* NewCaseHint, TArray<int32>& CaseNumbers, int32 CaseSolution, UHintCollection* HintData, int32 HintCount, TArray<bool>& Liars, TArray<bool>& TruthTellers, UHint* HintType)
+{
     TArray<int32> NewSubjectData;
-
     auto LogicArray = HintType->logic;
 
-    bool ConditionMet = false;
+    bool ConditionMet = true;
     bool InConditionLoop = false;
     bool IsNot = false;
+
+    TArray<ConjunctivesTypes> MyConjunctives;
+    TArray<bool> LogicTruths;
 
     int32 SkipCount = 0;
     int32 LogicSize = LogicArray.Num();
     int32 MaxLiarCount = HintData->MaxLiarCount;
+
+    TArray<FString> Text;
+    TArray<int32> BasisIndex;
+    TArray<int32> SubjectIndexes;
+
+
+    Text.Add("");
 
     for (int j = 0; j < LogicSize; j++)
     {
@@ -440,70 +563,128 @@ bool CreateHint(int i, FUCaseHint* NewCaseHint, TArray<int32> CaseNumbers, int32
         switch (LogicStatement->LogicType)
         {
         case (LogicTypes::MAX):
+            return false;
             break;
         case (LogicTypes::Unassigned):
+            return false;
             break;
         case (LogicTypes::Identifiers):
             break;
         case (LogicTypes::Roles):
             break;
-
         case (LogicTypes::Conditions):
             if (LogicStatement == &LogicNamespace::If)
             {
+                Text.Add("If ");
                 InConditionLoop = true;
-                ConditionMet = false;
             }
-            if (LogicStatement == &LogicNamespace::Then)
-                IsNot = ConditionMet ? false : true;
+            if (LogicStatement == &LogicNamespace::Then) 
+            {
+                Text.Add("then ");
+                int StatementIndex = 0;
+                ConditionMet = LogicTruths[StatementIndex];
+
+                for (auto& Var : MyConjunctives)
+                {
+                    StatementIndex++;
+                    if (Var == ConjunctivesTypes::AND)
+                        ConditionMet = ConditionMet && LogicTruths[StatementIndex];
+                    else if (Var == ConjunctivesTypes::OR)
+                        ConditionMet = ConditionMet || LogicTruths[StatementIndex];
+                }
+                MyConjunctives.Empty();
+                LogicTruths.Empty();
+                InConditionLoop = false;
+            }
             break;
         case (LogicTypes::Conjunctive):
 
-            if (InConditionLoop) {
-                if (LogicStatement == &LogicNamespace::Or && ConditionMet)
-                    SkipCount = 1;
-                else if (LogicStatement == &LogicNamespace::And)
-                    ConditionMet ? ConditionMet = false : SkipCount = 1; // Force next statment to need to be true or skip next as it no longer factors ([Extension] This method does not currently work for multiple conjunctives)
+            if (LogicStatement == &LogicNamespace::Or) {
+                Text.Add("or ");
+                MyConjunctives.Add(ConjunctivesTypes::OR);
             }
-            else {
-                // [Extension] Not required for scope of Game Jam: Handle Conjunctive Statements
+            else if (LogicStatement == &LogicNamespace::And) {
+                Text.Add("and ");
+                MyConjunctives.Add(ConjunctivesTypes::AND);
             }
             break;
 
         case (LogicTypes::Basis):
-            if (LogicStatement == &LogicNamespace::Is)
+            if (LogicStatement == &LogicNamespace::Is) 
                 break;
-            else if (LogicStatement == &LogicNamespace::Not)
+            else if (LogicStatement == &LogicNamespace::Not) 
                 IsNot = !IsNot;
             break;
 
         case (LogicTypes::Statements):
 
-            int32 SubjectCount = 1;
-            bool FoundSolution = SolveForStatement(j, LogicStatement, CaseNumbers, NewSubjectData, LogicArray, Liars, TruthTellers, 
+            int32 SubjectCount = 1;    
+            // We always try to make the Hint Statement functional (We can make a hint lie but there must a be a case capable of lying), 
+            bool FoundSolution = SolveForStatement(j, LogicStatement, CaseNumbers, NewSubjectData, LogicArray, Liars, TruthTellers, Text, BasisIndex, SubjectIndexes,
                 &SkipCount, &SubjectCount, InConditionLoop, IsNot, MaxLiarCount, CaseSolution, HintCount, LogicSize);
 
-            // If the If statment cannot be fullfilled set the logical statment that follows to !IsNot
-            // Then add Randomized Subject Data to create False Statement (As no Statement can be true any data is valid)
-            if (!FoundSolution && InConditionLoop)  
-            {
+            LogicTruths.Add(FoundSolution);
+
+            if (!FoundSolution)
                 AddRandomizedHintSubjectData(NewSubjectData, CaseNumbers, SubjectCount, HintCount);
-                IsNot = !IsNot;
-            }
-            else if (!FoundSolution) {
-                // Feature In Progress- this will be amended to instead try a different Hint type on Failure until all Hint types are exhausted
-                return false;
-            }
             break;
         }
     }
+
+    int StatementIndex = 0;
+    bool SolvedHint = LogicTruths[StatementIndex];
+
+    // We have to make a correct Hint lie on !ConditionsMet as when the if fails the Logic cannot be true
+    // We allow failed solution statements in case there is an Or later if not then return false
+    for (auto& Var : MyConjunctives)
+    {
+        StatementIndex++;
+        if (Var == ConjunctivesTypes::AND)
+            SolvedHint = ConditionMet && LogicTruths[StatementIndex];
+        else if (Var == ConjunctivesTypes::OR)
+            SolvedHint = ConditionMet || LogicTruths[StatementIndex];
+    }
+
+    if (ConditionMet && !SolvedHint == false)
+        return false;
+    else if (!ConditionMet && SolvedHint && !TruthTellers[i])
+        Liars[i] = true;
+    else if (!ConditionMet && SolvedHint && TruthTellers[i])
+        return false;
+
+    // Setting Subject Data in Text!
     NewCaseHint->hint = HintType;
     NewCaseHint->SubjectData = NewSubjectData;
-    NewCaseHint->hintText = ""; // This will be another big feature
+
+    int Index = 0;
+    for (auto& SubjectIndex : SubjectIndexes) 
+    {
+        if (SubjectIndex == -1) {
+            Index++;
+            continue;
+        }
+        Text[SubjectIndex] = "" + NewSubjectData[Index];
+        Index++;
+    }
+
+    // On rework may try to keep this out of the FUHint data, however this data is needed each Hint after Hints are created so it's convenient for first pass 
+    NewCaseHint->Text = Text;
+    NewCaseHint->BasisIndex = BasisIndex;
     return true;
 }
 
-TArray<FUCaseHint> UHintManager::GetLevelHints(TArray<int32> CaseNumbers, int32 CaseSolution, UHintCollection* HintData)
+template <typename T>
+void ShuffleArray(TArray<T>& Array)
+{
+    const int32 LastIndex = Array.Num() - 1;
+    for (int32 i = LastIndex; i > 0; --i)
+    {
+        int32 RandomIndex = FMath::RandRange(0, i);
+        Array.Swap(i, RandomIndex);
+    }
+}
+
+TArray<FUCaseHint> UHintManager::GetLevelHints(TArray<int32>& CaseNumbers, int32 CaseSolution, UHintCollection* HintData)
 {
     TArray<FUCaseHint> ChosenHints;   
     TArray<bool> Liars;
@@ -521,16 +702,31 @@ TArray<FUCaseHint> UHintManager::GetLevelHints(TArray<int32> CaseNumbers, int32 
     for (int i = 0; i < HintCount; i++)
     {
         FUCaseHint NewCaseHint;
-        bool HintPossible = CreateHint(i, &NewCaseHint, CaseNumbers, CaseSolution, HintData, HintCount, Liars, TruthTellers);
+        TArray<UHint*> RandomizedHintArray = HintData->HintCollections;
+        ShuffleArray(RandomizedHintArray);
+        bool HintPossible = false;
 
-        if (!HintPossible) {
-            // Somehow deal with this!!!
+        for (UHint* HintType : RandomizedHintArray) 
+        {
+            HintPossible = CreateHint(i, &NewCaseHint, CaseNumbers, CaseSolution, HintData, HintCount, Liars, TruthTellers, HintType);
+            if (HintPossible)
+                break; 
         }
 
+        if (!HintPossible) {
+            UE_LOG(LogTemp, Warning, TEXT("Not all Hints could be generated."));
+            return ChosenHints;
+        }
         ChosenHints.Add(NewCaseHint);
     }
 
-    // Change ChosenHints to reflect liars and truthtellers
+    for (int i = 0; i < HintCount; i++) {
+        for (auto& BasisIndex : ChosenHints[i].BasisIndex) {
+            bool basis = GetBoolFromText(ChosenHints[i].Text, BasisIndex);
+            basis = Liars[i] ? !basis : basis;
+            ChosenHints[i].Text[BasisIndex] = GetBoolFromText(ChosenHints[i].Text, BasisIndex) ? "is " : "is not";
+        }
+    }
     return ChosenHints;
 }
 

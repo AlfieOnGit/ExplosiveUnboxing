@@ -17,6 +17,26 @@ enum class LogicTypes : uint8
     MAX
 };
 
+UENUM(BlueprintType, Category = "Logic")
+enum class ConjunctivesTypes : uint8
+{
+    OR UMETA(DisplayName = "Or"),
+    AND UMETA(DisplayName = "And")
+};
+
+
+UENUM(BlueprintType, Category = "Logic")
+enum class LogicStatmentTypes : uint8
+{
+    Is,
+    IsGreater,
+    IsLess,
+    IsBetween,
+    IsPosOffset,
+    IsNegOffset
+};
+
+
 USTRUCT(BlueprintType)
 struct FLogic
 {
@@ -97,7 +117,6 @@ struct FLogicIdentifier : public FLogicRoles
 
         return false;
     }
-
 };
 
 USTRUCT(BlueprintType)
@@ -159,14 +178,14 @@ namespace LogicNamespace
     static FLogic Is(TEXT("IS"), TEXT("Is"), LogicTypes::Basis);
     static FLogic Not(TEXT("NOT"), TEXT("Not"), LogicTypes::Basis);
 
-    static FLogicIdentifier CaseNumber(TEXT("CASENUMBER"), TEXT("A case number"), true);
-    static FLogicIdentifier Colour(TEXT("COLOUR"), TEXT("A case colour"), true);
+    static FLogicIdentifier CaseNumber(TEXT("CASENUMBER"), TEXT("The case number "), true);
+    static FLogicIdentifier Colour(TEXT("COLOUR"), TEXT("The case colour "), true);
 
-    static FLogicIdentifier Truthful(TEXT("TRUTHFUL"), TEXT("A Truthful case"), false);
-    static FLogicIdentifier Lying(TEXT("LYING"), TEXT("A Lying case"), false);
+    static FLogicIdentifier Truthful(TEXT("TRUTHFUL"), TEXT("A Truthful case "), false);
+    static FLogicIdentifier Lying(TEXT("LYING"), TEXT("A Lying case "), false);
 
-    static FLogicRoles Danger(TEXT("DANGER"), TEXT("The dangerous case"));
-    static FLogicRoles Safe(TEXT("SAFE"), TEXT("A safe case"));
+    static FLogicRoles Danger(TEXT("DANGER"), TEXT("The dangerous case "));
+    static FLogicRoles Safe(TEXT("SAFE"), TEXT("A safe case "));
 
     static FLogicStatement Equal(TEXT("IDENTIFIER EQUALS ROLE"), TEXT("An Identifier is Equal to Role"), 100, 1, 1);
     static FLogicStatement Greater(TEXT("IDENTIFIER GREATERTHAN ROLE"), TEXT("An Identifier is Greater than Role"), 100, 1, 1);
@@ -222,6 +241,12 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
     FString hintText;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    TArray<FString> Text;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    TArray<int32> BasisIndex;
 
     FUCaseHint() : hint(nullptr) {}
 };
