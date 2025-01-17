@@ -78,8 +78,13 @@ struct FLogicRoles : public FLogic
 {
     GENERATED_BODY()
 
-    FLogicRoles() : FLogic(TEXT("Default Subject Logic"), TEXT("Default Subject Display Logic"), LogicTypes::Roles) {}
-    FLogicRoles(const FString& InLogic, const FString& InDisplayLogic, const LogicTypes InLogicType = LogicTypes::Roles) : FLogic(InLogic, InDisplayLogic, InLogicType) {}
+    FLogicRoles(const FString& InLogic, const FString& InDisplayLogic, LogicTypes InLogicType)
+        : FLogic(InLogic, InDisplayLogic, InLogicType) {
+    }
+
+    FLogicRoles()
+        : FLogic(TEXT("Default Subject Logic"), TEXT("Default Subject Display Logic"), LogicTypes::Roles) {
+    }
 
     virtual ~FLogicRoles() = default;
 
@@ -90,6 +95,7 @@ struct FLogicRoles : public FLogic
         return FLogic::operator==(Other);
     }
 };
+
 USTRUCT(BlueprintType)
 struct FLogicIdentifier : public FLogicRoles
 {
@@ -98,9 +104,14 @@ struct FLogicIdentifier : public FLogicRoles
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Logic")
     bool PlayerVisible;
 
-    FLogicIdentifier() : FLogicRoles(TEXT("Default Subject Logic"), TEXT("Default Subject Display Logic"), LogicTypes::Identifiers), PlayerVisible(false) {}
-
-    FLogicIdentifier(const FString& InLogic, const FString& InDisplayLogic, const bool InPlayerVisible) : FLogicRoles(InLogic, InDisplayLogic, LogicTypes::Identifiers), PlayerVisible(InPlayerVisible) {}
+    FLogicIdentifier(const FString& InLogic, const FString& InDisplayLogic, const LogicTypes InLogicType, bool InPlayerVisible)
+        : FLogicRoles(InLogic, InDisplayLogic, InLogicType)
+        , PlayerVisible(InPlayerVisible) {
+    }
+    FLogicIdentifier()
+        : FLogicRoles(TEXT("Default Subject Logic"), TEXT("Default Subject Display Logic"), LogicTypes::Identifiers)
+        , PlayerVisible(false) {
+    }
 
     virtual ~FLogicIdentifier() = default;
 
@@ -114,10 +125,10 @@ struct FLogicIdentifier : public FLogicRoles
             const FLogicIdentifier& OtherIdentifier = static_cast<const FLogicIdentifier&>(Other);
             return FLogicRoles::operator==(Other) && PlayerVisible == OtherIdentifier.PlayerVisible;
         }
-
         return false;
     }
 };
+
 
 USTRUCT(BlueprintType)
 struct FLogicStatement : public FLogic
@@ -157,6 +168,7 @@ struct FLogicStatement : public FLogic
         if (Other.LogicType == LogicTypes::Statements)
         {
             const FLogicStatement& OtherStatement = static_cast<const FLogicStatement&>(Other);
+
             return FLogic::operator==(Other) &&
                 Probability == OtherStatement.Probability &&
                 RolesCount == OtherStatement.RolesCount &&
@@ -178,14 +190,14 @@ namespace LogicNamespace
     static FLogic Is(TEXT("IS"), TEXT("Is"), LogicTypes::Basis);
     static FLogic Not(TEXT("NOT"), TEXT("Not"), LogicTypes::Basis);
 
-    static FLogicIdentifier CaseNumber(TEXT("CASENUMBER"), TEXT("The case number "), true);
-    static FLogicIdentifier Colour(TEXT("COLOUR"), TEXT("The case colour "), true);
+    static FLogicIdentifier CaseNumber(TEXT("CASENUMBER"), TEXT("the Case Number "), LogicTypes::Identifiers, true);
+    static FLogicIdentifier Colour(TEXT("COLOUR"), TEXT("the Case Colour "), LogicTypes::Identifiers, true);
 
-    static FLogicIdentifier Truthful(TEXT("TRUTHFUL"), TEXT("A Truthful case "), false);
-    static FLogicIdentifier Lying(TEXT("LYING"), TEXT("A Lying case "), false);
+    static FLogicIdentifier Truthful(TEXT("TRUTHFUL"), TEXT("a Truthful case "), LogicTypes::Identifiers, false);
+    static FLogicIdentifier Lying(TEXT("LYING"), TEXT("a Lying case "), LogicTypes::Identifiers, false);
 
-    static FLogicRoles Danger(TEXT("DANGER"), TEXT("The dangerous case "));
-    static FLogicRoles Safe(TEXT("SAFE"), TEXT("A safe case "));
+    static FLogicRoles Danger(TEXT("DANGER"), TEXT("the Dangerous case "), LogicTypes::Roles);
+    static FLogicRoles Safe(TEXT("SAFE"), TEXT("a Safe case "), LogicTypes::Roles);
 
     static FLogicStatement Equal(TEXT("IDENTIFIER EQUALS ROLE"), TEXT("An Identifier is Equal to Role"), 100, 1, 1);
     static FLogicStatement Greater(TEXT("IDENTIFIER GREATERTHAN ROLE"), TEXT("An Identifier is Greater than Role"), 100, 1, 1);
@@ -193,7 +205,6 @@ namespace LogicNamespace
     static FLogicStatement PlusOffset(TEXT("IDENTIFIER PLUS IDENTIFIER IS ROLE"), TEXT("An Identifier plus an Identifier is Equal to Role"), 100, 1, 2);
     static FLogicStatement NegOffset(TEXT("IDENTIFIER MINUS IDENTIFIER IS ROLE"), TEXT("An Identifier minus an Identifier is Equal to Role"), 100, 1, 2);
     static FLogicStatement Between(TEXT("IDENTIFIER EQUALS ROLE"), TEXT("Between Identifier & Identifier is Role"), 100, 1, 2);
-
 
     static TArray<FLogicIdentifier> AllIdentifiers = { CaseNumber, Truthful, Lying };
     static TArray<FLogicStatement> AllLogic = { Equal, Greater, Less, PlusOffset, NegOffset, Between};

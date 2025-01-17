@@ -57,14 +57,39 @@ void FHintDetailsCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBui
             if (MyObject.IsValid())
             {
                 ULogicData* MyLogic = NewObject<ULogicData>();
-                MyLogic->LogicStatement = &LogicNamespace::Truthful;
-
+                MyLogic->LogicStatement = &LogicNamespace::If;
                 MyObject->logic.Add(MyLogic);
+
+                ULogicData* MyLogic2 = NewObject<ULogicData>();
+                MyLogic2->LogicStatement = &LogicNamespace::Equal;
+                MyObject->logic.Add(MyLogic2);
+
+                ULogicData* MyLogicB = NewObject<ULogicData>();
+                MyLogicB->LogicStatement = &LogicNamespace::CaseNumber;
+                MyObject->logic.Add(MyLogicB);
+
+                ULogicData* MyLogicC = NewObject<ULogicData>();
+                MyLogicC->LogicStatement = &LogicNamespace::Danger;
+                MyObject->logic.Add(MyLogicC);
+
+                ULogicData* MyLogic3 = NewObject<ULogicData>();
+                MyLogic3->LogicStatement = &LogicNamespace::Then;
+                MyObject->logic.Add(MyLogic3);
+
+                ULogicData* MyLogic6 = NewObject<ULogicData>();
+                MyLogic6->LogicStatement = &LogicNamespace::Equal;
+                MyObject->logic.Add(MyLogic6);
+
+                ULogicData* MyLogic4 = NewObject<ULogicData>();
+                MyLogic4->LogicStatement = &LogicNamespace::CaseNumber;
+                MyObject->logic.Add(MyLogic4);
+
+                ULogicData* MyLogic5 = NewObject<ULogicData>();
+                MyLogic5->LogicStatement = &LogicNamespace::Safe;
+                MyObject->logic.Add(MyLogic5);
             }
             return FReply::Handled();
         };
-
-
 
     Category.AddCustomRow(LOCTEXT("MyButtonRowFilterString", "Search Filter Keywords"))
         .WholeRowContent()
