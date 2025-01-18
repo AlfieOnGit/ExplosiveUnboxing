@@ -36,4 +36,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* Camera;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AActor* Selected;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float test1;
 };
