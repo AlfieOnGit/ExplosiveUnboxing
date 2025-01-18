@@ -179,6 +179,30 @@ struct FLogicStatement : public FLogic
     }
 };
 
+UENUM(BlueprintType, Category = "Logic")
+enum class AllLogic : uint8
+{
+    If, 
+    Then,
+    And,
+    Or,
+    Is,
+    Not,
+    Probably,
+    CaseNumber,
+    Colour,
+    Truthful,
+    Lying,
+    Danger,
+    Safe,
+    Equal,
+    Greater,
+    Less,
+    PlusOffset,
+    NegOffset,
+    Between
+};
+
 namespace LogicNamespace
 {
     static FLogic If(TEXT("IF"), TEXT("If"), LogicTypes::Conditions);
@@ -189,6 +213,8 @@ namespace LogicNamespace
 
     static FLogic Is(TEXT("IS"), TEXT("Is"), LogicTypes::Basis);
     static FLogic Not(TEXT("NOT"), TEXT("Not"), LogicTypes::Basis);
+    static FLogic Probably(TEXT("PROBABLY"), TEXT("Probably"), LogicTypes::Basis);
+
 
     static FLogicIdentifier CaseNumber(TEXT("CASENUMBER"), TEXT("the Case Number "), LogicTypes::Identifiers, true);
     static FLogicIdentifier Colour(TEXT("COLOUR"), TEXT("the Case Colour "), LogicTypes::Identifiers, true);
@@ -206,22 +232,35 @@ namespace LogicNamespace
     static FLogicStatement NegOffset(TEXT("IDENTIFIER MINUS IDENTIFIER IS ROLE"), TEXT("An Identifier minus an Identifier is Equal to Role"), 100, 1, 2);
     static FLogicStatement Between(TEXT("IDENTIFIER EQUALS ROLE"), TEXT("Between Identifier & Identifier is Role"), 100, 1, 2);
 
-    static TArray<FLogicIdentifier> AllIdentifiers = { CaseNumber, Truthful, Lying };
-    static TArray<FLogicStatement> AllLogic = { Equal, Greater, Less, PlusOffset, NegOffset, Between};
-    static TArray<FLogicRoles> AllRoles = {Danger, Safe, CaseNumber, Truthful, Lying };
+    static FLogic* GetLogicByEnum(AllLogic LogicType)
+    {
+        switch (LogicType)
+        {
+        case AllLogic::If: return &If;
+        case AllLogic::Then: return &Then;
+        case AllLogic::And: return &And;
+        case AllLogic::Or: return &Or;
+        case AllLogic::Is: return &Is;
+        case AllLogic::Not: return &Not;
+        case AllLogic::Probably: return &Probably;
+        case AllLogic::CaseNumber: return &CaseNumber;
+        case AllLogic::Colour: return &Colour;
+        case AllLogic::Truthful: return &Truthful;
+        case AllLogic::Lying: return &Lying;
+        case AllLogic::Danger: return &Danger;
+        case AllLogic::Safe: return &Safe;
+        case AllLogic::Equal: return &Equal;
+        case AllLogic::Greater: return &Greater;
+        case AllLogic::Less: return &Less;
+        case AllLogic::PlusOffset: return &PlusOffset;
+        case AllLogic::NegOffset: return &NegOffset;
+        case AllLogic::Between: return &Between;
+        default:
+            return nullptr; 
+        }
+    }
 }
 
-
-UCLASS(BlueprintType)
-
-class EXPLOSIVEUNBOXING_API ULogicData : public UObject
-{
-    GENERATED_BODY()
-
-    public: 
-        FLogic* LogicStatement;
-
-};
 
 UCLASS(BlueprintType)
 class EXPLOSIVEUNBOXING_API UHint : public UDataAsset
@@ -230,8 +269,7 @@ class EXPLOSIVEUNBOXING_API UHint : public UDataAsset
 public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
-    TArray<ULogicData*> logic;
-
+    TArray<AllLogic> logic;
     UHint() = default;
 };
 
@@ -258,6 +296,12 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
     TArray<int32> BasisIndex;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    TArray<int32> ConditionBasisIndex;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    TArray<int32> SubjectIndexes;
 
     FUCaseHint() : hint(nullptr) {}
 };
