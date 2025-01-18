@@ -215,7 +215,6 @@ namespace LogicNamespace
     static FLogic Not(TEXT("NOT"), TEXT("Not"), LogicTypes::Basis);
     static FLogic Probably(TEXT("PROBABLY"), TEXT("Probably"), LogicTypes::Basis);
 
-
     static FLogicIdentifier CaseNumber(TEXT("CASENUMBER"), TEXT("the Case Number "), LogicTypes::Identifiers, true);
     static FLogicIdentifier Colour(TEXT("COLOUR"), TEXT("the Case Colour "), LogicTypes::Identifiers, true);
 
