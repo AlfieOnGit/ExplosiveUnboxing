@@ -12,6 +12,9 @@ APlayerCharacter::APlayerCharacter()
 
 	Selected = nullptr;
 	test1 = 1.0f;
+	responseNeeded = false;
+	responseRecieved = false;
+	confirmSelection = NULL;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Player Camera"));
 	Camera->SetupAttachment(RootComponent);
@@ -29,6 +32,11 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (responseNeeded && responseRecieved) {
+		// here would be event call to say actor selected confirm
+		responseNeeded = false;
+	}
 
 }
 
