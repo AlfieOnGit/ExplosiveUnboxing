@@ -9,6 +9,29 @@ UBriefcasePoolManager::UBriefcasePoolManager()
 
 }
 
+void UBriefcasePoolManager::CreateNewBriefCase(FString hintText)
+{
+    for (const FVector& SpawnPoint : CaseSpawnPoints)
+    {
+        if (BriefCasePrefab)
+        {
+            AActor* BriefCase = GetWorld()->SpawnActor<AActor>(BriefCasePrefab, SpawnPoint, FRotator::ZeroRotator);
+            if (BriefCase)
+            {
+                UE_LOG(LogTemp, Log, TEXT("Briefcase spawned at location: %s"), *SpawnPoint.ToString());
+
+                UBriefcase* BriefCaseComponent = BriefCase->FindComponentByClass<UBriefcase>();
+                if (BriefCaseComponent)
+                {
+
+                }
+            }
+        }
+        else
+            UE_LOG(LogTemp, Warning, TEXT("BriefCasePrefab is not set!"));
+    }
+}
+
 void UBriefcasePoolManager::BeginPlay()
 {
     Super::BeginPlay();
@@ -35,6 +58,9 @@ void UBriefcasePoolManager::BeginPlay()
         UE_LOG(LogTemp, Warning, TEXT("%s"), *Hints.hintText);
 
     UE_LOG(LogTemp, Warning, TEXT("Just what could this all mean?"));
+
+
+    CreateNewBriefCase(TEXT(""));
 }
 
 

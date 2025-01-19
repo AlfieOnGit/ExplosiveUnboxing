@@ -14,10 +14,6 @@ class EXPLOSIVEUNBOXING_API UHintManager : public UActorComponent
 	GENERATED_BODY()
 
 public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hint")
-	UHintCollection* hintColTest;
-
 	// Example how to use: GetLevelHints({4, 7, 5, 9}, 7, UHintCol Reference)
 	UFUNCTION(BlueprintCallable, Category = "Hints")
 	TArray<FUCaseHint> GetLevelHints(TArray<int32>& caseNumbers, int32 caseSolution, UHintCollection* HintData);
