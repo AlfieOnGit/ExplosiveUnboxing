@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/Actor.h"
 #include "PlayerCharacter.generated.h"
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActorClickedEvent, AActor*, Actor);
 
 UCLASS()
 class EXPLOSIVEUNBOXING_API APlayerCharacter : public ACharacter
@@ -31,6 +35,9 @@ public:
 	void XLook(float InputValue);
 	void YLook(float InputValue);
 
+	UPROPERTY(BlueprintAssignable, Category="Events")
+	FOnActorClickedEvent SelectedActor;
+
 protected:
 
 	UPROPERTY(EditAnywhere)
@@ -50,4 +57,5 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool confirmSelection;
+
 };

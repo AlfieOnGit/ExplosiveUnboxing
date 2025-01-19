@@ -34,7 +34,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if (responseNeeded && responseRecieved) {
-		// here would be event call to say actor selected confirm
+		SelectedActor.Broadcast(Selected);
 		responseNeeded = false;
 	}
 
