@@ -43,6 +43,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	void ClearCases();
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	AActor* HintManagerActor;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	AActor* BriefcasePoolManagerActor;
+
 protected:	
 	unsigned int CaseCount = 0;
 	UBriefcase* Cases[MAX_CASES] { nullptr };
@@ -51,16 +58,10 @@ protected:
 	UHintManager* MyHintManager;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	AActor* HintManagerActor;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UHintCollection* hintColTest;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UBriefcasePoolManager* BriefcasePoolManager;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	AActor* BriefcasePoolManagerActor;
 
 	virtual void BeginPlay() override;
 };
