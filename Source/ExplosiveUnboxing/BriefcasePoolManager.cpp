@@ -71,6 +71,13 @@ UBriefcase* UBriefcasePoolManager::DefineBriefCaseData(AActor* BriefCase, int32 
     if (BriefCase)
     {
         UBriefcase* BriefCaseComponent = BriefCase->FindComponentByClass<UBriefcase>();
+        USpriteComponent2D* SpriteComponent = BriefCase->FindComponentByClass<USpriteComponent2D>();
+
+        if (CaseNumber > 0 && CaseNumber < 11)
+            SpriteComponent->SetSprite(BriefcaseSpritesOrdered[CaseNumber]);
+        else
+            SpriteComponent->SetSprite(BriefcaseSpritesOrdered[0]);
+
         if (BriefCaseComponent){
             BriefCaseComponent->ResetBriefcase(CaseNumber, IsDanger, HintText);
             return BriefCaseComponent;

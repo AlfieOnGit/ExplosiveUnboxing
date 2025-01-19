@@ -10,8 +10,10 @@
 #include "Hint.h"
 #include <stack>
 
+#include "PaperSprite.h"
+#include "PaperSpriteComponent.h"
+#include "SpriteComponent2D.h"
 #include "BriefcasePoolManager.generated.h"
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class EXPLOSIVEUNBOXING_API UBriefcasePoolManager : public UActorComponent
@@ -24,17 +26,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BriefCasePool")
 	UHintManager* MyHintManager;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hint")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BriefCasePool")
 	AActor* HintManagerActor;
 
-	UPROPERTY(EditAnywhere, Category = "Spawning")
+	UPROPERTY(EditAnywhere, Category = "BriefCasePool")
 	TSubclassOf<AActor> BriefCasePrefab;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BriefCasePool")
 	UHintCollection* hintColTest;
 
-	UPROPERTY(EditAnywhere, Category = "Spawn Points")
+	UPROPERTY(EditAnywhere, Category = "BriefCasePool")
 	TArray<AActor*> SpawnPointComponents;
+
+	UPROPERTY(EditAnywhere, Category = "BriefCasePool")
+	TArray<UPaperSprite*> BriefcaseSpritesOrdered;
 
 	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
 	TArray<UBriefcase*> SpawnBriefCases(TArray<int32>& CaseNumbers, TArray<FString>& hintTexts, int32 Solution);
