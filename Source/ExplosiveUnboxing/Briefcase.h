@@ -1,17 +1,18 @@
 #pragma once
 
+
 #include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
 #include "Hint.h"
 #include "Engine/DataAsset.h"
 #include "Briefcase.generated.h"
 
-/**
- * Data asset briefcase, not the game object
- */
-UCLASS()
-class EXPLOSIVEUNBOXING_API UBriefcase : public UDataAsset
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class EXPLOSIVEUNBOXING_API UBriefcase : public UActorComponent
 {
 	GENERATED_BODY()
+
 	
 public:
 	UBriefcase() : UBriefcase(-1, nullptr) { }
@@ -39,4 +40,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UHint* Hint;
+
+
+protected:
+	virtual void BeginPlay() override;
 };

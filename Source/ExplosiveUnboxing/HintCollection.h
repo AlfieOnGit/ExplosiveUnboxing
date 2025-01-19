@@ -15,4 +15,7 @@ class EXPLOSIVEUNBOXING_API UHintCollection : public UDataAsset
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HintCollections")
     TArray<UHint*> HintCollections;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HintCollections")
+    int32 MaxLiarCount;
 };

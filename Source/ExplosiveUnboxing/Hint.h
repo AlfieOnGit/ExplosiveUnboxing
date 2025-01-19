@@ -17,6 +17,26 @@ enum class LogicTypes : uint8
     MAX
 };
 
+UENUM(BlueprintType, Category = "Logic")
+enum class ConjunctivesTypes : uint8
+{
+    OR UMETA(DisplayName = "Or"),
+    AND UMETA(DisplayName = "And")
+};
+
+
+UENUM(BlueprintType, Category = "Logic")
+enum class LogicStatmentTypes : uint8
+{
+    Is,
+    IsGreater,
+    IsLess,
+    IsBetween,
+    IsPosOffset,
+    IsNegOffset
+};
+
+
 USTRUCT(BlueprintType)
 struct FLogic
 {
@@ -43,21 +63,37 @@ struct FLogic
         , LogicType(InLogicType) {
     }
 
-    FString ToString() const
+    virtual ~FLogic() = default;
+
+    virtual bool operator==(const FLogic& Other) const
     {
-        return FString::Printf(TEXT("Logic: %s, DisplayLogic: %s, LogicType: %d"), *Logic, *DisplayLogic, static_cast<uint8>(LogicType));
+        if (LogicType != Other.LogicType)
+            return false;
+        return Logic == Other.Logic && DisplayLogic == Other.DisplayLogic;
     }
 };
 
-
-
 USTRUCT(BlueprintType)
-struct FLogicRoles: public FLogic
+struct FLogicRoles : public FLogic
 {
     GENERATED_BODY()
 
-    FLogicRoles() : FLogic(TEXT("Default Subject Logic"), TEXT("Default Subject Display Logic"), LogicTypes::Roles) {}
-    FLogicRoles(const FString& InLogic, const FString& InDisplayLogic, const LogicTypes InLogicType = LogicTypes::Roles) : FLogic(InLogic, InDisplayLogic, InLogicType) {}
+    FLogicRoles(const FString& InLogic, const FString& InDisplayLogic, LogicTypes InLogicType)
+        : FLogic(InLogic, InDisplayLogic, InLogicType) {
+    }
+
+    FLogicRoles()
+        : FLogic(TEXT("Default Subject Logic"), TEXT("Default Subject Display Logic"), LogicTypes::Roles) {
+    }
+
+    virtual ~FLogicRoles() = default;
+
+    virtual bool operator==(const FLogic& Other) const override
+    {
+        if (LogicType != Other.LogicType)
+            return false;
+        return FLogic::operator==(Other);
+    }
 };
 
 USTRUCT(BlueprintType)
@@ -68,10 +104,31 @@ struct FLogicIdentifier : public FLogicRoles
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Logic")
     bool PlayerVisible;
 
-    FLogicIdentifier() : FLogicRoles(TEXT("Default Subject Logic"), TEXT("Default Subject Display Logic"), LogicTypes::Identifiers), PlayerVisible(false) {}
-       
-    FLogicIdentifier(const FString& InLogic, const FString& InDisplayLogic, const bool InPlayerVisible) : FLogicRoles(InLogic, InDisplayLogic, LogicTypes::Identifiers), PlayerVisible(InPlayerVisible) {}
+    FLogicIdentifier(const FString& InLogic, const FString& InDisplayLogic, const LogicTypes InLogicType, bool InPlayerVisible)
+        : FLogicRoles(InLogic, InDisplayLogic, InLogicType)
+        , PlayerVisible(InPlayerVisible) {
+    }
+    FLogicIdentifier()
+        : FLogicRoles(TEXT("Default Subject Logic"), TEXT("Default Subject Display Logic"), LogicTypes::Identifiers)
+        , PlayerVisible(false) {
+    }
+
+    virtual ~FLogicIdentifier() = default;
+
+    virtual bool operator==(const FLogic& Other) const override
+    {
+        if (LogicType != Other.LogicType)
+            return false;
+
+        if (Other.LogicType == LogicTypes::Identifiers)
+        {
+            const FLogicIdentifier& OtherIdentifier = static_cast<const FLogicIdentifier&>(Other);
+            return FLogicRoles::operator==(Other) && PlayerVisible == OtherIdentifier.PlayerVisible;
+        }
+        return false;
+    }
 };
+
 
 USTRUCT(BlueprintType)
 struct FLogicStatement : public FLogic
@@ -101,11 +158,49 @@ struct FLogicStatement : public FLogic
         , IdentifierCount(InIdentifiersCount) {
     }
 
-    FString ToString() const
+    virtual ~FLogicStatement() = default;
+
+    virtual bool operator==(const FLogic& Other) const override
     {
-        return FString::Printf(TEXT("Logic: %s, DisplayLogic: %s, Probability: %d, RolesCount: %d, IdentifierCount: %d"),
-            *Logic, *DisplayLogic, Probability, RolesCount, IdentifierCount);
+        if (LogicType != Other.LogicType)
+            return false;
+
+        if (Other.LogicType == LogicTypes::Statements)
+        {
+            const FLogicStatement& OtherStatement = static_cast<const FLogicStatement&>(Other);
+
+            return FLogic::operator==(Other) &&
+                Probability == OtherStatement.Probability &&
+                RolesCount == OtherStatement.RolesCount &&
+                IdentifierCount == OtherStatement.IdentifierCount;
+        }
+
+        return false;
     }
+};
+
+UENUM(BlueprintType, Category = "Logic")
+enum class AllLogic : uint8
+{
+    If, 
+    Then,
+    And,
+    Or,
+    Is,
+    Not,
+    Probably,
+    CaseNumber,
+    Colour,
+    Truthful,
+    Lying,
+    Danger,
+    Safe,
+    Equal,
+    Greater,
+    Less,
+    PlusOffset,
+    NegOffset,
+    Between
 };
 
 namespace LogicNamespace
@@ -118,13 +213,16 @@ namespace LogicNamespace
 
     static FLogic Is(TEXT("IS"), TEXT("Is"), LogicTypes::Basis);
     static FLogic Not(TEXT("NOT"), TEXT("Not"), LogicTypes::Basis);
+    static FLogic Probably(TEXT("PROBABLY"), TEXT("Probably"), LogicTypes::Basis);
 
-    static FLogicIdentifier CaseNumber(TEXT("CASENUMBER"), TEXT("A case number"), true);
-    static FLogicIdentifier Truthful(TEXT("TRUTHFUL"), TEXT("A Truthful case"), false);
-    static FLogicIdentifier Lying(TEXT("LYING"), TEXT("A Lying case"), false);
+    static FLogicIdentifier CaseNumber(TEXT("CASENUMBER"), TEXT("the Case Number "), LogicTypes::Identifiers, true);
+    static FLogicIdentifier Colour(TEXT("COLOUR"), TEXT("the Case Colour "), LogicTypes::Identifiers, true);
 
-    static FLogicRoles Danger(TEXT("DANGER"), TEXT("The dangerous case"));
-    static FLogicRoles Safe(TEXT("SAFE"), TEXT("A safe case"));
+    static FLogicIdentifier Truthful(TEXT("TRUTHFUL"), TEXT("a Truthful case "), LogicTypes::Identifiers, false);
+    static FLogicIdentifier Lying(TEXT("LYING"), TEXT("a Lying case "), LogicTypes::Identifiers, false);
+
+    static FLogicRoles Danger(TEXT("DANGER"), TEXT("the Dangerous case "), LogicTypes::Roles);
+    static FLogicRoles Safe(TEXT("SAFE"), TEXT("a Safe case "), LogicTypes::Roles);
 
     static FLogicStatement Equal(TEXT("IDENTIFIER EQUALS ROLE"), TEXT("An Identifier is Equal to Role"), 100, 1, 1);
     static FLogicStatement Greater(TEXT("IDENTIFIER GREATERTHAN ROLE"), TEXT("An Identifier is Greater than Role"), 100, 1, 1);
@@ -133,36 +231,44 @@ namespace LogicNamespace
     static FLogicStatement NegOffset(TEXT("IDENTIFIER MINUS IDENTIFIER IS ROLE"), TEXT("An Identifier minus an Identifier is Equal to Role"), 100, 1, 2);
     static FLogicStatement Between(TEXT("IDENTIFIER EQUALS ROLE"), TEXT("Between Identifier & Identifier is Role"), 100, 1, 2);
 
-    static TArray<FLogicIdentifier> AllIdentifiers = { CaseNumber, Truthful, Lying };
-    static TArray<FLogicStatement> AllLogic = { Equal, Greater, Less, PlusOffset, NegOffset, Between};
-    static TArray<FLogicRoles> AllRoles = { Danger, Safe, CaseNumber, Truthful, Lying };
-
+    static FLogic* GetLogicByEnum(AllLogic LogicType)
+    {
+        switch (LogicType)
+        {
+        case AllLogic::If: return &If;
+        case AllLogic::Then: return &Then;
+        case AllLogic::And: return &And;
+        case AllLogic::Or: return &Or;
+        case AllLogic::Is: return &Is;
+        case AllLogic::Not: return &Not;
+        case AllLogic::Probably: return &Probably;
+        case AllLogic::CaseNumber: return &CaseNumber;
+        case AllLogic::Colour: return &Colour;
+        case AllLogic::Truthful: return &Truthful;
+        case AllLogic::Lying: return &Lying;
+        case AllLogic::Danger: return &Danger;
+        case AllLogic::Safe: return &Safe;
+        case AllLogic::Equal: return &Equal;
+        case AllLogic::Greater: return &Greater;
+        case AllLogic::Less: return &Less;
+        case AllLogic::PlusOffset: return &PlusOffset;
+        case AllLogic::NegOffset: return &NegOffset;
+        case AllLogic::Between: return &Between;
+        default:
+            return nullptr; 
+        }
+    }
 }
 
-
-UCLASS(BlueprintType)
-
-class EXPLOSIVEUNBOXING_API ULogicData : public UObject
-{
-    GENERATED_BODY()
-
-    public: 
-        FLogic LogicStatement;
-        TArray<int32> SubjectData;
-};
 
 UCLASS(BlueprintType)
 class EXPLOSIVEUNBOXING_API UHint : public UDataAsset
 {
     GENERATED_BODY()
-
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
-    FString hintText;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
-    TArray<ULogicData*> logic;
-
+    TArray<AllLogic> logic;
     UHint() = default;
 };
 
@@ -179,7 +285,22 @@ public:
     UHint* hint;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hint")
-    int32 caseReference;
+    TArray<int32> SubjectData;
 
-    FUCaseHint() : hint(nullptr), caseReference(0) {}
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    FString hintText;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    TArray<FString> Text;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    TArray<int32> BasisIndex;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    TArray<int32> ConditionBasisIndex;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+    TArray<int32> SubjectIndexes;
+
+    FUCaseHint() : hint(nullptr) {}
 };

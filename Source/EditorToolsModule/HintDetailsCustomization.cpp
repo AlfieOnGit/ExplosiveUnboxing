@@ -56,15 +56,12 @@ void FHintDetailsCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBui
         {
             if (MyObject.IsValid())
             {
-                ULogicData* MyLogic = NewObject<ULogicData>();
-                MyLogic->LogicStatement = LogicNamespace::Truthful;
-
-                MyObject->logic.Add(MyLogic);
+                MyObject->logic.Add(AllLogic::Equal);
+                MyObject->logic.Add(AllLogic::CaseNumber);
+                MyObject->logic.Add(AllLogic::Danger);
             }
             return FReply::Handled();
         };
-
-
 
     Category.AddCustomRow(LOCTEXT("MyButtonRowFilterString", "Search Filter Keywords"))
         .WholeRowContent()
@@ -75,17 +72,17 @@ void FHintDetailsCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBui
                     .OptionsSource(&ConditionOptions)
                     .OnSelectionChanged_Lambda([MyObject](TSharedPtr<FText> NewSelection, ESelectInfo::Type SelectInfo)
                         {
-
                             if (MyObject.IsValid())
                             {
-                                ULogicData* MyLogic = NewObject<ULogicData>();
+                                // Create new Logic data here from enum
+                                /*ULogicData* MyLogic = NewObject<ULogicData>();
                                 if (!MyLogic)
                                 {
                                     UE_LOG(LogTemp, Error, TEXT("Failed to create ULogicData!"));
                                     return;
                                 }
                                 MyLogic->LogicStatement = LogicNamespace::Truthful;
-                                MyObject->logic.Add(MyLogic);
+                                MyObject->logic.Add(MyLogic);*/
                             }
                         })
                     .Content()
