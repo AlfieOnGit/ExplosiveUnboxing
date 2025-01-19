@@ -10,6 +10,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActorClickedEvent, AActor*, Actor);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHostSelected, bool, isHost);
+
 UCLASS()
 class EXPLOSIVEUNBOXING_API APlayerCharacter : public ACharacter
 {
@@ -38,6 +40,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="Events")
 	FOnActorClickedEvent SelectedActor;
 
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnHostSelected SelectedHost;
+
 protected:
 
 	UPROPERTY(EditAnywhere)
@@ -47,7 +52,7 @@ protected:
 	AActor* Selected;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float test1;
+	bool isSelectHost;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool responseNeeded;

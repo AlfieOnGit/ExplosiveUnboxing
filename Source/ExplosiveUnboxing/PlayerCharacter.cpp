@@ -11,7 +11,7 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Selected = nullptr;
-	test1 = 1.0f;
+	isSelectHost = false;
 	responseNeeded = false;
 	responseRecieved = false;
 	confirmSelection = NULL;
@@ -32,6 +32,11 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (isSelectHost) {
+		SelectedHost.Broadcast(isSelectHost);
+		isSelectHost = false;
+	}
 
 	if (responseNeeded && responseRecieved) {
 		SelectedActor.Broadcast(Selected);
