@@ -7,7 +7,6 @@
 #include "Engine/DataAsset.h"
 #include "Briefcase.generated.h"
 
-
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class EXPLOSIVEUNBOXING_API UBriefcase : public UActorComponent
 {
@@ -15,32 +14,31 @@ class EXPLOSIVEUNBOXING_API UBriefcase : public UActorComponent
 
 	
 public:
-	UBriefcase() : UBriefcase(-1, nullptr) { }
-	
-	explicit UBriefcase(int Number, UHint* Hint = nullptr);
+	UBriefcase() : UBriefcase(-1, false, "") {}
 
-	/**
-	 * Sets the briefcase to open and returns the hint
-	 * @return Hint* or NULLPTR if no hint (i.e. bomb case)
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	UHint* Open();
+	explicit UBriefcase(int32 InNumber, bool InIsDanger, FString InHintText)
+		: Number(InNumber)
+		, IsDanger(InIsDanger)
+		, HintText(MoveTemp(InHintText)) {
+	}
 
-	
-	[[nodiscard]]
+	UFUNCTION(BlueprintCallable, Category = "Briefcase")
+	void ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHintText);
+
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	bool ContainsBomb() const { return Hint != nullptr; }
-	
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	bool Open(FString OutText);
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	bool CanOpen() { return !Opened; }
+
+		UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	int32 OnSelect() { return Number; }
+
+private:	
+	int32 Number;
 	bool Opened = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	int Number;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	UHint* Hint;
-
+	bool IsDanger = false;
+	FString HintText;
 
 protected:
 	virtual void BeginPlay() override;

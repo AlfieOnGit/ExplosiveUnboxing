@@ -1,23 +1,22 @@
 #include "Briefcase.h"
 
-
 void UBriefcase::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-UBriefcase::UBriefcase(int const Number, UHint* Hint)
+void UBriefcase::ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHintText)
 {
-	PrimaryComponentTick.bCanEverTick = false;
-
-	this->Number = Number;
-	this->Hint = Hint;
+	this->Number = NewNumber;
+	this->Opened = false;
+	this->IsDanger = NewIsDanger;
+	this->HintText = NewHintText;
 }
 
-
-UHint* UBriefcase::Open()
+bool UBriefcase::Open(FString OutText)
 {
+	OutText = this->HintText;
 	this->Opened = true;
-	return this->Hint;
+	return this->IsDanger;
 }
 

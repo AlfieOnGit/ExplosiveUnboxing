@@ -1,15 +1,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HintManager.h"
-#include "Briefcase.h"
 #include "GameFramework/Pawn.h"
 #include "Engine/World.h"
-
-#include "Hint.h"
-
-
 #include "Components/ActorComponent.h"
+
+#include "HintManager.h"
+#include "Briefcase.h"
+#include "Hint.h"
+#include <stack>
+
 #include "BriefcasePoolManager.generated.h"
 
 
@@ -27,21 +27,44 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hint")
 	AActor* HintManagerActor;
 
-
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<AActor> BriefCasePrefab;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BriefCasePool")
 	UHintCollection* hintColTest;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BriefCasePool")
-	TArray<FVector> CaseSpawnPoints = { FVector(1, 2, 3), FVector(4, 5, 6), FVector(7, 8, 9) };
+	UPROPERTY(EditAnywhere, Category = "Spawn Points")
+	TArray<AActor*> SpawnPointComponents;
 
-private: 
+	// Should be in TurnManger, but writing it here 
+	TArray<int32> SelectBriefCaseData(int32 BriefCaseCount, int32* Solution);
 
 	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
-	void CreateNewBriefCase(FString hint);
+	TArray<UBriefcase*> SpawnBriefCases(TArray<int32>& CaseNumbers, TArray<FString>& hintTexts, int32 Solution);
+
+	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
+	void CleanPool();
+
+
+private: 
+	// Should be in TurnManger, but writing it here
+	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
+	void AddListenerOnOpen(AActor* OnClickedActor);
+
+	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
+	AActor* CreateNewBriefCase(const FVector MySpawnPoint, const FRotator MySpawnRot);
+
+	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
+	AActor* RecycleUnusedBriefCase(const FVector MySpawnPoint, const FRotator MySpawnRot);
+
+	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
+	UBriefcase* DefineBriefCaseData(AActor* BriefCase, int32 CaseNumber, bool IsDanger, FString HintText);
+
+	TArray<AActor*> ActiveBriefCases;
+	std::stack<AActor*> PooledBriefCases;
+
+	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
+	int32 GetSolution(TArray<int32>& CaseNumbers);
 
 protected:
 	virtual void BeginPlay() override;
