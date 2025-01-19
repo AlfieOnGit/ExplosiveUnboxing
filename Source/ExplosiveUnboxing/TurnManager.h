@@ -2,10 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "Briefcase.h"
+#include "BriefcasePoolManager.h"
+#include "HintManager.h"
 #include "Components/ActorComponent.h"
 #include "TurnManager.generated.h"
 
-#define MAX_CASES 10
+#define MAX_CASES 15
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -22,7 +24,12 @@ public:
 // public:	
 // 	// Called every frame
 // 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	TArray<int32> SelectBriefCaseData(int32 BriefCaseCount, int32* Solution);
 
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	int32 GetSolution(TArray<int32>& CaseNumbers);
+	
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	int GetBriefcaseCount() const { return CaseCount; }
 	
@@ -40,7 +47,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	UBriefcase* GetCase(int const Index) const { return Cases[Index]; }
 
-protected:
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	void ClearCases();
+
+protected:	
 	unsigned int CaseCount = 0;
 	UBriefcase* Cases[MAX_CASES] { nullptr };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UHintManager* MyHintManager;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	AActor* HintManagerActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UHintCollection* hintColTest;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UBriefcasePoolManager* BriefcasePoolManager;
+
+	virtual void BeginPlay() override;
 };
