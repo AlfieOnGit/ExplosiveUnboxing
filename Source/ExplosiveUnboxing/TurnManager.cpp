@@ -87,6 +87,14 @@ void UTurnManager::BeginPlay()
         return;
     }
 
+    if (BriefcasePoolManagerActor)
+        BriefcasePoolManager = BriefcasePoolManagerActor->FindComponentByClass<UBriefcasePoolManager>();
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("BriefcasePoolManagerActor reference is null!"));
+        return;
+    }
+
     int32 solution;
     TArray<int32> CaseNumbers = SelectBriefCaseData(10, &solution);
     auto AllHints = MyHintManager->GetLevelHints(CaseNumbers, solution, hintColTest);

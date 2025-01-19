@@ -17,13 +17,6 @@ class EXPLOSIVEUNBOXING_API UTurnManager : public UActorComponent
 
 public:	
 	UTurnManager() = default;
-// protected:
-// 	// Called when the game starts
-// 	virtual void BeginPlay() override;
-//
-// public:	
-// 	// Called every frame
-// 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	TArray<int32> SelectBriefCaseData(int32 BriefCaseCount, int32* Solution);
 
@@ -65,6 +58,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UBriefcasePoolManager* BriefcasePoolManager;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	AActor* BriefcasePoolManagerActor;
 
 	virtual void BeginPlay() override;
 };
