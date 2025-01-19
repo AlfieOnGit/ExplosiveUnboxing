@@ -36,9 +36,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spawn Points")
 	TArray<AActor*> SpawnPointComponents;
 
-	// Should be in TurnManger, but writing it here 
-	TArray<int32> SelectBriefCaseData(int32 BriefCaseCount, int32* Solution);
-
 	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
 	TArray<UBriefcase*> SpawnBriefCases(TArray<int32>& CaseNumbers, TArray<FString>& hintTexts, int32 Solution);
 
@@ -63,8 +60,6 @@ private:
 	TArray<AActor*> ActiveBriefCases;
 	std::stack<AActor*> PooledBriefCases;
 
-	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
-	int32 GetSolution(TArray<int32>& CaseNumbers);
 
 protected:
 	virtual void BeginPlay() override;
