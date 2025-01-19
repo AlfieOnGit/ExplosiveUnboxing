@@ -41,4 +41,13 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float test1;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool responseNeeded;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool responseRecieved;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool confirmSelection;
 };
