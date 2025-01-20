@@ -1,11 +1,15 @@
 #pragma once
 
-
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Hint.h"
 #include "Engine/DataAsset.h"
+#include "Public/OnCaseEvent.h"
+
+#include "GameFramework/Actor.h"
+
 #include "Briefcase.generated.h"
+
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class EXPLOSIVEUNBOXING_API UBriefcase : public UActorComponent
@@ -22,23 +26,41 @@ public:
 		, HintText(MoveTemp(InHintText)) {
 	}
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UOnCaseEvent* OnCaseSelectEvent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UOnCaseEvent* OnCaseOpenEvent;
+
 	UFUNCTION(BlueprintCallable, Category = "Briefcase")
 	void ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHintText);
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	bool Open(FString OutText);
+	bool Open();
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	FString GetHintText() { return HintText; }
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	void SetSelected(bool InSelected) { this->Selected = InSelected; }
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	bool CanOpen() { return !Opened; }
 
-		UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	int32 OnSelect() { return Number; }
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	void OnClick(AActor* TouchedActor, FKey ButtonPressed);
 
 private:	
 	int32 Number;
 	bool Opened = false;
+	bool Selected = false;
 	bool IsDanger = false;
 	FString HintText;
+
+
 
 protected:
 	virtual void BeginPlay() override;

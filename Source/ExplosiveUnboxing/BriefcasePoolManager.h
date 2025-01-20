@@ -23,17 +23,8 @@ class EXPLOSIVEUNBOXING_API UBriefcasePoolManager : public UActorComponent
 public:	
 	UBriefcasePoolManager();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BriefCasePool")
-	UHintManager* MyHintManager;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BriefCasePool")
-	AActor* HintManagerActor;
-
 	UPROPERTY(EditAnywhere, Category = "BriefCasePool")
 	TSubclassOf<AActor> BriefCasePrefab;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BriefCasePool")
-	UHintCollection* hintColTest;
 
 	UPROPERTY(EditAnywhere, Category = "BriefCasePool")
 	TArray<AActor*> SpawnPointComponents;
@@ -49,9 +40,6 @@ public:
 
 
 private: 
-	// Should be in TurnManger, but writing it here
-	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
-	void AddListenerOnOpen(AActor* OnClickedActor);
 
 	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
 	AActor* CreateNewBriefCase(const FVector MySpawnPoint, const FRotator MySpawnRot);

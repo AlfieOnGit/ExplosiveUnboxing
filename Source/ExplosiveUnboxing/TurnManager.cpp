@@ -6,7 +6,6 @@ void UTurnManager::ClearCases()
 	CaseCount = 0;
 }
 
-
 void DebugScenario(TArray<int32>& CaseNumbers)
 {
     FString Total = TEXT("Around the room I could see mountains of briefcases piled high, each displaying a Number: ");
@@ -14,7 +13,6 @@ void DebugScenario(TArray<int32>& CaseNumbers)
         Total += FString::FromInt(Case) + TEXT(" ");
     UE_LOG(LogTemp, Warning, TEXT("%s"), *Total);
 }
-
 
 void DebugCaseHints(TArray<FUCaseHint>& AllHints)
 {
@@ -24,12 +22,11 @@ void DebugCaseHints(TArray<FUCaseHint>& AllHints)
     UE_LOG(LogTemp, Warning, TEXT("Just what could this all mean?"));
 }
 
-
 int32 constexpr RangeUpper = MAX_CASES;
 int32 constexpr RangeLower = 1;
 
 bool constexpr ReOrderCases = true;
-bool constexpr AddCasesLinear = true;
+bool constexpr AddCasesLinear = true; 
 
 TArray<int32> UTurnManager::SelectBriefCaseData(int32 const BriefCaseCount, int32* Solution)
 {
@@ -38,7 +35,7 @@ TArray<int32> UTurnManager::SelectBriefCaseData(int32 const BriefCaseCount, int3
 
     int32 MyUpperRange = RangeUpper >= BriefCaseCount ? RangeUpper : BriefCaseCount;
 
-    for (int32 i = RangeLower; i <= RangeUpper; ++i)
+    for (int32 i = RangeLower; i <= MyUpperRange; ++i)
         FullRange.Add(i);
 
     if (!AddCasesLinear) {
@@ -74,10 +71,51 @@ int32 UTurnManager::GetSolution(TArray<int32>& CaseNumbers)
     return Solution;
 }
 
+void UTurnManager::SetupListeners()
+{
+    if (OnCaseSelectEvent)
+        OnCaseSelectEvent->CallEvent.AddDynamic(this, &UTurnManager::OnSelectCaseEventReciever);
+    if (OnGameOverEvent)
+        OnGameOverEvent->CallEvent.AddDynamic(this, &UTurnManager::OnGameOverEventReciever);
+    if (OnSolvedEvent)
+        OnSolvedEvent->CallEvent.AddDynamic(this, &UTurnManager::OnSolvedEventReciever);
+    if (OnCaseSolutionCheckLoopEvent)
+        OnCaseSolutionCheckLoopEvent->CallEvent.AddDynamic(this, &UTurnManager::OnCaseSolutionCheckLoopEventReciever);
+    if (OnCaseSolutionChosenEvent)
+        OnCaseSolutionChosenEvent->CallEvent.AddDynamic(this, &UTurnManager::OnCaseSolutionChosenEventReciever);
+    if (OnNPCInteractEvent)
+        OnNPCInteractEvent->CallEvent.AddDynamic(this, &UTurnManager::OnNPCInteractEventReciever);
+    if (OnCaseOpenEvent)
+        OnCaseOpenEvent->CallEvent.AddDynamic(this, &UTurnManager::OnCaseOpenEventReciever);
+}
+
+void UTurnManager::OnSelectCaseEventReciever(int32 CaseNumber)
+{
+    UE_LOG(LogTemp, Log, TEXT("Event Received!"));
+}
+
+void UTurnManager::OnCaseOpenEventReciever(int32 CaseNumber) 
+{
+
+}
+
+void UTurnManager::OnNPCInteractEventReciever() {}
+
+void UTurnManager::OnCaseSolutionChosenEventReciever(int32 CaseNumber) {}
+
+void UTurnManager::OnCaseSolutionCheckLoopEventReciever(int32 CaseNumber) {}
+
+void UTurnManager::OnSolvedEventReciever() {}
+
+void UTurnManager::OnGameOverEventReciever() {}
+
+
+
 
 void UTurnManager::BeginPlay()
 {
     Super::BeginPlay();
+    SetupListeners();
 
     if (HintManagerActor)
         MyHintManager = HintManagerActor->FindComponentByClass<UHintManager>();

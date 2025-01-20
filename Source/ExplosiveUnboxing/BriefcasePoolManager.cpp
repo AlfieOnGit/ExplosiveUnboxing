@@ -1,18 +1,10 @@
 
 #include "BriefcasePoolManager.h"
 
-// As Open events are from the player the player AActor must be passed here so the listener can be set
-// They will tell this object when it has been opened
-void UBriefcasePoolManager::AddListenerOnOpen(AActor* OnClickedActor)
-{
-    //OnClickedActor->OnClickedEventName.AddDynamic(this, &UBriefcase::Open);
-}
-
 UBriefcasePoolManager::UBriefcasePoolManager()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
-
 
 void UBriefcasePoolManager::CleanPool()
 {    
