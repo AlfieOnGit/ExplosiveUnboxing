@@ -56,10 +56,10 @@ public:
 	UOnCaseEvent* OnCaseSelectEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	UOnGameEvent* OnGameOverEvent;
+	UOnCaseEvent* OnGameOverEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	UOnGameEvent* OnSolvedEvent;
+	UOnCaseEvent* OnSolvedEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UOnCaseEvent* OnCaseSolutionCheckLoopEvent;
@@ -68,7 +68,7 @@ public:
 	UOnCaseEvent* OnCaseSolutionChosenEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	UOnGameEvent* OnNPCInteractEvent;
+	UOnCaseEvent* OnNPCInteractEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UOnCaseEvent* OnCaseOpenEvent;
@@ -127,7 +127,7 @@ protected:
 	// Call func::SetDialogue(DialogueTable*, -1, TArray<CaseNumbers>, "")
 	// DialogueTable* will change if interacted before OnCaseOpenEventReciever recieves an event for the first time  (refer to script)
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	void OnNPCInteractEventReciever();
+	void OnNPCInteractEventReciever(int32 CaseNumber);
 
 	// The player has selected a choice
 	// Invoked by DialogueManager: (For Kieran extend: Dialogue struct to include UEventDataAsset* parameter that we can set in Dialogue tables=> then after dialogue has finished Invoke this event if it is not nullptr)
@@ -151,13 +151,13 @@ protected:
 	// This will have happened after game over dialogue has already triggered so no new game state is required
 	// Create new level and set Level 2 intro dialogue or if no level 2 proceed to Vicotry screen
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	void OnSolvedEventReciever();
+	void OnSolvedEventReciever(int32 CaseNumber);
 
 	// Invoked by DialogueManager:
 	// This will have happened after game over dialogue has already triggered so no new game state is required
 	// Proceed to Game Over screen or to main menu
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	void OnGameOverEventReciever();
+	void OnGameOverEventReciever(int32 CaseNumber);
 
 
 	// Shouldn't be required, but could implement a system where after every dialogue an ResumeGame is Invoked to unpause this TurnManager where the turn manager would pause before calling SetDialogue()

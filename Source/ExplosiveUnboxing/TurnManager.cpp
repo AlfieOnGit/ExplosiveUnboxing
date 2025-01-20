@@ -99,15 +99,15 @@ void UTurnManager::OnCaseOpenEventReciever(int32 CaseNumber)
 
 }
 
-void UTurnManager::OnNPCInteractEventReciever() {}
+void UTurnManager::OnNPCInteractEventReciever(int32 CaseNumber) {}
 
 void UTurnManager::OnCaseSolutionChosenEventReciever(int32 CaseNumber) {}
 
 void UTurnManager::OnCaseSolutionCheckLoopEventReciever(int32 CaseNumber) {}
 
-void UTurnManager::OnSolvedEventReciever() {}
+void UTurnManager::OnSolvedEventReciever(int32 CaseNumber) {}
 
-void UTurnManager::OnGameOverEventReciever() {}
+void UTurnManager::OnGameOverEventReciever(int32 CaseNumber) {}
 
 
 
