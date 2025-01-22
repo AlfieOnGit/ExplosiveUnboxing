@@ -6,12 +6,12 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameEvent);
 
 UCLASS()
-class EXPLOSIVEUNBOXING_API UOnGameEvent : public UDataAsset
+class EXPLOSIVEUNBOXING_API UOnGameEvent : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hints")
+	UPROPERTY(EditAnywhere, BlueprintAssignable, BlueprintCallable, BlueprintReadWrite, Category = "Hints")
 	FOnGameEvent CallEvent;
 
 	UOnGameEvent() = default;
