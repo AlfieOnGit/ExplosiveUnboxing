@@ -3,33 +3,17 @@
 void UBriefcase::BeginPlay()
 {
 	Super::BeginPlay();
-	AActor* Owner = GetOwner();
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	PlayerController->bEnableClickEvents = true;
-
-	if (Owner) 
-		Owner->EnableInput(GetWorld()->GetFirstPlayerController());
-
-	if (Owner)
-		Owner->OnClicked.AddDynamic(this, &UBriefcase::OnClick);
 }
 
-void UBriefcase::OnClick(AActor* TouchedActor, FKey ButtonPressed)
+void UBriefcase::OnClick()
 {
 	UE_LOG(LogTemp, Log, TEXT("OnClickTriggered"));
 
 	if (this->Opened)
 		return;
 
-	if (this->Selected) 
-	{
-		if (OnCaseOpenEvent)
-			OnCaseOpenEvent->CallEvent.Broadcast(this->Number);
-	}
-	else {
-		if (OnCaseSelectEvent) 
-			OnCaseSelectEvent->CallEvent.Broadcast(this->Number);
-	}
+	if (OnCaseClickEvent)
+		OnCaseClickEvent->CallEvent.Broadcast(this->Number);
 }
 
 

@@ -5,7 +5,7 @@
 USpriteComponent2D::USpriteComponent2D()
 {
     // Default sprite here
-    static ConstructorHelpers::FObjectFinder<UPaperSprite> DefaultSprite(TEXT("/Game/DataAssets/Sprites/spritepng_Sprite_1.spritepng_Sprite_1")); // change path
+    static ConstructorHelpers::FObjectFinder<UPaperSprite> DefaultSprite(TEXT("/Game/SpriteAssets/SpriteComponents/spritepng_Sprite_1.spritepng_Sprite_1")); // change path
     if (DefaultSprite.Succeeded())
     {
         SetSprite(DefaultSprite.Object);

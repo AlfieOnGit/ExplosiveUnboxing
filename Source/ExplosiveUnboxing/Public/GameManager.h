@@ -12,9 +12,6 @@ class EXPLOSIVEUNBOXING_API UGameManager : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	/**
-	 * Resets score
-	 */
 	UFUNCTION(BlueprintCallable, Category = "Game")
 	void OnNewGame();
 	

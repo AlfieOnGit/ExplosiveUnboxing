@@ -14,6 +14,5 @@ void UGameManager::OnPlayerChoose()
 
 void UGameManager::OnGameOver()
 {
-	if (TurnManager) TurnManager->ClearCases();
-	// Set scene to death screen
+
 }

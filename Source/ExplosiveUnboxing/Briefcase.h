@@ -15,8 +15,6 @@ UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class EXPLOSIVEUNBOXING_API UBriefcase : public UActorComponent
 {
 	GENERATED_BODY()
-
-	
 public:
 	UBriefcase() : UBriefcase(-1, false, "") {}
 
@@ -27,10 +25,7 @@ public:
 	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	UOnCaseEvent* OnCaseSelectEvent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	UOnCaseEvent* OnCaseOpenEvent;
+	UOnCaseEvent* OnCaseClickEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcase")
 	void ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHintText);
@@ -51,7 +46,7 @@ public:
 	int32 OnSelect() { return Number; }
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	void OnClick(AActor* TouchedActor, FKey ButtonPressed);
+	void OnClick();
 
 private:	
 	int32 Number;
