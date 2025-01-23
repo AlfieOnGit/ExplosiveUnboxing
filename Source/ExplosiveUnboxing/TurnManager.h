@@ -6,7 +6,7 @@
 #include "Public/OnCaseEvent.h"
 #include "Public/InDialogue.h"
 #include "Public/OnDialogueEvent.h"
-
+#include "Public/IDialogueManager.h"
 #include "Public/BriefCaseData.h"
 
 #include "Misc/OutputDeviceNull.h"
@@ -24,12 +24,6 @@ public:
 	// Dialogue refs:: refactor in the future to move this out of this class
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UInDialogue* IntroDialogue;
-
-
-
-	// To Call
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	UOnDialogueEvent* OnDialogueEvent;
 
 	// To listen
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
@@ -55,6 +49,9 @@ public:
 protected:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UBriefCaseData* BriefCaseDataManager;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	AActor* DialogueManager;
 
 	int32 FirstSelected;
 	void SetupListeners();

@@ -28,12 +28,22 @@ void UTurnManager::SetupListeners()
         OnNPCInteractEvent->CallEvent.AddDynamic(this, &UTurnManager::OnNPCInteractEventReciever);
 }
 
+// Using the cpp interface should also work, but Unity crashes ://
 void  UTurnManager::SetDialogue(UInDialogue* dialogue) 
 {
-    if (dialogue) 
-        OnDialogueEvent->CallEvent.Broadcast(dialogue);
-    else 
-        UE_LOG(LogTemp, Warning, TEXT("A Dialogue asset has not been set in the TurnManager"));
+    if (UFunction* TriggerFunction = DialogueManager->FindFunction(TEXT("SetDialogue")))
+    {
+        struct FSetDialogueParams
+        {
+            UInDialogue* newDialogue;
+        };
+
+        uint8* ParamsBuffer = static_cast<uint8*>(FMemory_Alloca(TriggerFunction->ParmsSize));
+        FMemory::Memzero(ParamsBuffer, TriggerFunction->ParmsSize);
+        FSetDialogueParams* Params = reinterpret_cast<FSetDialogueParams*>(ParamsBuffer);
+        Params->newDialogue = dialogue;
+        DialogueManager->ProcessEvent(TriggerFunction, ParamsBuffer);
+    }
 }
 
 bool PlayerChoosing = false;
@@ -42,6 +52,8 @@ bool FirstInteraction = true;
 
 void UTurnManager::OnCaseClickEventReciever(int32 CaseNumber)
 {
+    UE_LOG(LogTemp, Warning, TEXT("A case has been clciked"));
+
     if (!PlayerChoosing) {
         if (BriefCaseDataManager->IsSelectedCase(CaseNumber))
         {
