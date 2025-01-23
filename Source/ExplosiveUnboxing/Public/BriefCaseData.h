@@ -17,25 +17,36 @@ class EXPLOSIVEUNBOXING_API UBriefCaseData : public UActorComponent
 public:	
 	UBriefCaseData();
 
-	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	int32 GetSelectedCase();
-	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	void SetSelectedCase(int32 CaseNumber);
-	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	bool IsSelectedCase(int32 CaseNumber);
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	int32 GetChosenCase();
+	int32 GetSelectedCase() { return SelectedCase; }
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	void SetChosenCase(int32 CaseNumber);
+	void SetSelectedCase(int32 CaseNumber);
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	int32 GetOpenedCase() { return OpenedCase; }
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	void SetOpenedCase(int32 CaseNumber) { OpenedCase = CaseNumber;  }
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	int32 GetChosenCase() { return PlayerChosenCase; }
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	void SetChosenCase(int32 CaseNumber) { PlayerChosenCase = CaseNumber; }
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	bool IsSelectedCase(int32 CaseNumber) { return CaseNumber == SelectedCase; }
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	bool OpenAndCheckCase(int32 CaseNumber);
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	FString GetHintData(int32 CaseNumber);
+	FString GetHintData(int32 CaseNumber) { return HintText; }
+
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	int32 GetRandomUnopenedCase();
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	bool IsSolution(int32 CaseNumber) { return CaseNumber == Solution; }
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	void ClearCases();
@@ -43,10 +54,16 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	int32 SelectedCase;
+	int32 SelectedCase = -1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	int32 PlayerChosenCase;
+	int32 OpenedCase = -1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	int32 PlayerChosenCase = -1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	FString HintText = TEXT("");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	int32 Solution;
@@ -65,6 +82,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	int32 PickSolution(TArray<int32>& CaseNumbers);
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	UBriefcase* GetCase(int32 CaseNumber);
 
 	virtual void BeginPlay() override;
 

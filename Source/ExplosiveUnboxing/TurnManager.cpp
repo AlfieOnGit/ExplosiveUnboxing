@@ -10,6 +10,7 @@ void UTurnManager::BeginPlay()
     SetupListeners();
     SetDialogue(IntroDialogue);
     FirstSelected = BriefCaseDataManager->GetRandomUnopenedCase();
+    BriefCaseDataManager->SetSelectedCase(FirstSelected);
 }
 
 void UTurnManager::SetupListeners()
@@ -46,8 +47,10 @@ void  UTurnManager::SetDialogue(UInDialogue* dialogue)
     }
 }
 
+
 bool PlayerChoosing = false;
 bool FirstSelect = true;
+bool FirstOpen = true;
 bool FirstInteraction = true;
 
 void UTurnManager::OnCaseClickEventReciever(int32 CaseNumber)
@@ -57,37 +60,32 @@ void UTurnManager::OnCaseClickEventReciever(int32 CaseNumber)
     if (!PlayerChoosing) {
         if (BriefCaseDataManager->IsSelectedCase(CaseNumber))
         {
-            // Player is opening case
-            SetDialogue(IntroDialogue);
+            BriefCaseDataManager->OpenAndCheckCase(CaseNumber);
+            FirstOpen ? SetDialogue(FirstOpenCase) : SetDialogue(OpenCase);
+            FirstOpen = false;
+            FirstSelect = false;
         }
         else 
-        {
-            // Player is selecting case
-            if (FirstSelect) 
-            {
-                BriefCaseDataManager->SetSelectedCase(CaseNumber);
-                SetDialogue(IntroDialogue);
-                FirstSelect = false;
-            }
-            else {
-                BriefCaseDataManager->SetSelectedCase(CaseNumber);
-                SetDialogue(IntroDialogue);
-            }
+        {                
+            BriefCaseDataManager->SetSelectedCase(CaseNumber);
+            FirstSelect ? SetDialogue(FirstChangeSelection) : SetDialogue(SelectedCase);
+            FirstSelect = false;
         }
     }
-    else 
+    else // The player has chosen a case for solution
     {
-        // The player is choosing a case for solution
         BriefCaseDataManager->SetChosenCase(CaseNumber);
-        SetDialogue(IntroDialogue);
+        int ToOpen = BriefCaseDataManager->GetRandomUnopenedCase();
+        BriefCaseDataManager->OpenAndCheckCase(ToOpen);
+        SetDialogue(OpenCaseLoopFirst);
     }
 }
 
 void UTurnManager::OnNPCInteractEventReciever()
 {
-    SetDialogue(HostConversation);
+    FirstInteraction ? SetDialogue(HostFirstConversation) : SetDialogue(HostConversation);
+    FirstInteraction = false;
 }
-
 
 void UTurnManager::OnChooseSolutionEventReciever()
 {
@@ -97,10 +95,8 @@ void UTurnManager::OnChooseSolutionEventReciever()
 void UTurnManager::OnSolutionCheckLoopEventReciever() 
 {
     int ToOpen = BriefCaseDataManager->GetRandomUnopenedCase();
-    if (BriefCaseDataManager->OpenAndCheckCase(ToOpen))
-        SetDialogue(IntroDialogue);
-    else 
-        SetDialogue(IntroDialogue);
+    BriefCaseDataManager->OpenAndCheckCase(ToOpen);
+    BriefCaseDataManager->IsSolution(ToOpen) ? SetDialogue(OpenCaseLoopFinal) : SetDialogue(OpenCaseLoop);
 }
 
 

@@ -10,22 +10,40 @@ void UBriefCaseData::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-int32 UBriefCaseData::GetSelectedCase() { return 0; }
+
+UBriefcase* UBriefCaseData::GetCase(int32 CaseNumber) {
+    for (auto& Case : Cases)
+    {
+        if (Case->GetCaseNumber() == CaseNumber)
+            return Case;
+    }
+    return nullptr;
+}
 
 void UBriefCaseData::SetSelectedCase(int32 CaseNumber)
 {
+    SelectedCase = CaseNumber; 
     // Move case to table(); => to be done
 }
 
-bool UBriefCaseData::IsSelectedCase(int32 CaseNumber) { return true; }
-FString UBriefCaseData::GetHintData(int32 CaseNumber) { return TEXT(""); }
-int32 UBriefCaseData::GetRandomUnopenedCase() {return 0;}
-int32 UBriefCaseData::GetChosenCase() { return 0; }
-void UBriefCaseData::SetChosenCase(int32 CaseNumber) {}
+int32 UBriefCaseData::GetRandomUnopenedCase()
+{
+    for (auto& Case : Cases)
+    {
+        auto CaseNumber = Case->GetCaseNumber();
+        if (Case->CanOpen() && CaseNumber != PlayerChosenCase)
+            return CaseNumber;
+    }
+    return PlayerChosenCase;
+}
 
 bool UBriefCaseData::OpenAndCheckCase(int32 CaseNumber) 
 {
     // Move case to pile(); => to be done
+    auto Case = GetCase(CaseNumber);
+    HintText = Case->Open();
+    SelectedCase = -1;
+    OpenedCase = CaseNumber;
     return true;
 }
 
@@ -113,10 +131,10 @@ void UBriefCaseData::BeginPlay()
     TArray<int32> CaseNumbers = SelectBriefCaseData(10);
     auto AllHints = MyHintManager->GetLevelHints(CaseNumbers, Solution, hintColTest);
 
-    TArray<FString> HintText;
+    TArray<FString> HintTextArray;
     for (auto& Hints : AllHints)
-        HintText.Add(*Hints.hintText);
-    Cases = BriefcasePoolManager->SpawnBriefCases(CaseNumbers, HintText, Solution);
+        HintTextArray.Add(*Hints.hintText);
+    Cases = BriefcasePoolManager->SpawnBriefCases(CaseNumbers, HintTextArray, Solution);
 
     DebugScenario(CaseNumbers);
     DebugCaseHints(AllHints);

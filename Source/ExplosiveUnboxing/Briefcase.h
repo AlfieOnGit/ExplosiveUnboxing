@@ -31,7 +31,7 @@ public:
 	void ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHintText);
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
-	bool Open();
+	FString Open();
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	FString GetHintText() { return HintText; }
@@ -47,6 +47,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	void OnClick();
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	int32 GetCaseNumber() { return Number; }
 
 private:	
 	int32 Number;
