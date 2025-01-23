@@ -25,6 +25,39 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UInDialogue* IntroDialogue;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* FirstOpenCase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* FirstChangeSelection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* HostFirstConversation;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* HostConversation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* SelectedCase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* ChangeSelectedCase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* OpenCase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* OpenCaseLoopFirst;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* OpenCaseLoop;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* OpenCaseLoopFinal;
+
+
+
+
 	// To listen
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UOnCaseEvent* OnCaseClickEvent;

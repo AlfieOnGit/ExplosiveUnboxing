@@ -5,23 +5,16 @@
 #include "OnGameEvent.h"
 #include "InDialogue.generated.h"
 
-
-USTRUCT(BlueprintType)
-struct FUDialogueOption
+UENUM(BlueprintType, Category = "Logic")
+enum class OnTableEnd : uint8
 {
-    GENERATED_BODY()
+    EndDialogue UMETA(DisplayName = "End Dialogue"),
+    SwitchByYesNo UMETA(DisplayName = "Switch by Yes or No"),
+    SwitchByIsNotGameOver UMETA(DisplayName = "Switch by IsGameOver"),
+    ContinueToFirstOption UMETA(DisplayName = "Continue to first Option")
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Logic")
-    FString OptionText;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Logic")
-    UDataTable* NextDialogue;
-
-    FUDialogueOption()
-        : OptionText(TEXT("Default Logic"))
-        , NextDialogue(nullptr) {
-    }
 };
+
 
 UCLASS(BlueprintType, Blueprintable)
 class EXPLOSIVEUNBOXING_API UInDialogue : public UPrimaryDataAsset
@@ -36,6 +29,12 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
 	UOnGameEvent* Event;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+    OnTableEnd OnTableEnd;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
-    TArray<FUDialogueOption> DialogueChoice;
+    UInDialogue* DialogueYesChoice;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+    UInDialogue* DialogueNoChoice;
 };

@@ -85,7 +85,7 @@ void UTurnManager::OnCaseClickEventReciever(int32 CaseNumber)
 
 void UTurnManager::OnNPCInteractEventReciever()
 {
-    SetDialogue(IntroDialogue);
+    SetDialogue(HostConversation);
 }
 
 
