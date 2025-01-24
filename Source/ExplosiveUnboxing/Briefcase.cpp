@@ -26,9 +26,9 @@ void UBriefcase::ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHi
 	this->HintText = NewHintText;
 }
 
-bool UBriefcase::Open()
+FString UBriefcase::Open()
 {
 	this->Opened = true;
-	return this->IsDanger;
+	return this->HintText;
 }
 

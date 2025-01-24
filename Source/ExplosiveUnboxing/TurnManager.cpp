@@ -10,6 +10,7 @@ void UTurnManager::BeginPlay()
     SetupListeners();
     SetDialogue(IntroDialogue);
     FirstSelected = BriefCaseDataManager->GetRandomUnopenedCase();
+    BriefCaseDataManager->SetSelectedCase(FirstSelected);
 }
 
 void UTurnManager::SetupListeners()
@@ -30,52 +31,58 @@ void UTurnManager::SetupListeners()
 
 void  UTurnManager::SetDialogue(UInDialogue* dialogue) 
 {
-    if (dialogue) 
-        OnDialogueEvent->CallEvent.Broadcast(dialogue);
-    else 
-        UE_LOG(LogTemp, Warning, TEXT("A Dialogue asset has not been set in the TurnManager"));
-}
+    if (UFunction* TriggerFunction = DialogueManager->FindFunction(TEXT("SetDialogue")))
+    {
+        struct FSetDialogueParams
+        {
+            UInDialogue* newDialogue;
+        };
 
-bool PlayerChoosing = false;
-bool FirstSelect = true;
-bool FirstInteraction = true;
+        uint8* ParamsBuffer = static_cast<uint8*>(FMemory_Alloca(TriggerFunction->ParmsSize));
+        FMemory::Memzero(ParamsBuffer, TriggerFunction->ParmsSize);
+        FSetDialogueParams* Params = reinterpret_cast<FSetDialogueParams*>(ParamsBuffer);
+        Params->newDialogue = dialogue;
+        DialogueManager->ProcessEvent(TriggerFunction, ParamsBuffer);
+    }
+}
 
 void UTurnManager::OnCaseClickEventReciever(int32 CaseNumber)
 {
+    UE_LOG(LogTemp, Warning, TEXT("A case has been clciked"));
+
+    if (Chosen)
+        return;
+
     if (!PlayerChoosing) {
         if (BriefCaseDataManager->IsSelectedCase(CaseNumber))
         {
-            // Player is opening case
-            SetDialogue(IntroDialogue);
+            BriefCaseDataManager->OpenAndCheckCase(CaseNumber);
+            FirstOpen ? SetDialogue(FirstOpenCase) : SetDialogue(OpenCase);
+            FirstOpen = false;
+            FirstSelect = false;
         }
         else 
-        {
-            // Player is selecting case
-            if (FirstSelect) 
-            {
-                BriefCaseDataManager->SetSelectedCase(CaseNumber);
-                SetDialogue(IntroDialogue);
-                FirstSelect = false;
-            }
-            else {
-                BriefCaseDataManager->SetSelectedCase(CaseNumber);
-                SetDialogue(IntroDialogue);
-            }
+        {                
+            BriefCaseDataManager->SetSelectedCase(CaseNumber);
+            FirstSelect ? SetDialogue(FirstChangeSelection) : SetDialogue(SelectedCase);
+            FirstSelect = false;
         }
     }
-    else 
+    else // The player has chosen a case for solution
     {
-        // The player is choosing a case for solution
+        Chosen = true;
         BriefCaseDataManager->SetChosenCase(CaseNumber);
-        SetDialogue(IntroDialogue);
+        int ToOpen = BriefCaseDataManager->GetRandomUnopenedCase();
+        BriefCaseDataManager->OpenAndCheckCase(ToOpen);
+        SetDialogue(OpenCaseLoopFirst);
     }
 }
 
 void UTurnManager::OnNPCInteractEventReciever()
 {
-    SetDialogue(IntroDialogue);
+    FirstInteraction ? SetDialogue(HostFirstConversation) : SetDialogue(HostConversation);
+    FirstInteraction = false;
 }
-
 
 void UTurnManager::OnChooseSolutionEventReciever()
 {
@@ -84,11 +91,10 @@ void UTurnManager::OnChooseSolutionEventReciever()
 
 void UTurnManager::OnSolutionCheckLoopEventReciever() 
 {
+
     int ToOpen = BriefCaseDataManager->GetRandomUnopenedCase();
-    if (BriefCaseDataManager->OpenAndCheckCase(ToOpen))
-        SetDialogue(IntroDialogue);
-    else 
-        SetDialogue(IntroDialogue);
+    BriefCaseDataManager->OpenAndCheckCase(ToOpen);
+    BriefCaseDataManager->IsSolution(ToOpen) ? SetDialogue(OpenCaseLoopFinal) : SetDialogue(OpenCaseLoop);
 }
 
 

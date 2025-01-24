@@ -6,7 +6,7 @@
 #include "Public/OnCaseEvent.h"
 #include "Public/InDialogue.h"
 #include "Public/OnDialogueEvent.h"
-
+#include "Public/IDialogueManager.h"
 #include "Public/BriefCaseData.h"
 
 #include "Misc/OutputDeviceNull.h"
@@ -25,11 +25,38 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UInDialogue* IntroDialogue;
 
-
-
-	// To Call
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
-	UOnDialogueEvent* OnDialogueEvent;
+	UInDialogue* FirstOpenCase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* FirstChangeSelection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* HostFirstConversation;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* HostConversation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* SelectedCase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* ChangeSelectedCase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* OpenCase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* OpenCaseLoopFirst;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* OpenCaseLoop;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UInDialogue* OpenCaseLoopFinal;
+
+
+
 
 	// To listen
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
@@ -56,9 +83,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UBriefCaseData* BriefCaseDataManager;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	AActor* DialogueManager;
+
 	int32 FirstSelected;
 	void SetupListeners();
 	void SetDialogue(UInDialogue* dialogue);
+
+
+	bool PlayerChoosing = false;
+	bool FirstSelect = true;
+	bool Chosen = false;
+	bool FirstOpen = true;
+	bool FirstInteraction = true;
 
 	virtual void BeginPlay() override;
 
