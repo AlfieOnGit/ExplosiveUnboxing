@@ -7,8 +7,6 @@ void UBriefcase::BeginPlay()
 
 void UBriefcase::OnClick()
 {
-	UE_LOG(LogTemp, Log, TEXT("OnClickTriggered"));
-
 	if (this->Opened)
 		return;
 
@@ -17,13 +15,14 @@ void UBriefcase::OnClick()
 }
 
 
-void UBriefcase::ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHintText)
+void UBriefcase::ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHintText, FVector NewPlacement)
 {
 	this->Number = NewNumber;
 	this->Opened = false;
 	this->Selected = false;
 	this->IsDanger = NewIsDanger;
 	this->HintText = NewHintText;
+	this->Placement = NewPlacement;
 }
 
 FString UBriefcase::Open()

@@ -16,19 +16,20 @@ class EXPLOSIVEUNBOXING_API UBriefcase : public UActorComponent
 {
 	GENERATED_BODY()
 public:
-	UBriefcase() : UBriefcase(-1, false, "") {}
+	UBriefcase() : UBriefcase(-1, false, "", FVector::ZeroVector) {}
 
-	explicit UBriefcase(int32 InNumber, bool InIsDanger, FString InHintText)
+	explicit UBriefcase(int32 InNumber, bool InIsDanger, FString InHintText, FVector InPlacement)
 		: Number(InNumber)
 		, IsDanger(InIsDanger)
-		, HintText(MoveTemp(InHintText)) {
+		, HintText(MoveTemp(InHintText))		
+		, Placement(InPlacement) {
 	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UOnCaseEvent* OnCaseClickEvent;
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcase")
-	void ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHintText);
+	void ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHintText, FVector NewPlacement);
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	FString Open();
@@ -51,13 +52,34 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	int32 GetCaseNumber() { return Number; }
 
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	void ReturnToPlacement() 
+	{
+		auto Owner = GetOwner();
+		if (Owner)
+			Owner->SetActorLocation(Placement);
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	void MoveToPosition(FVector NewPosition)
+	{
+		auto Owner = GetOwner();
+		if (Owner)
+			Owner->SetActorLocation(NewPosition);
+	}
+
+	
+
+
+
 private:	
 	int32 Number;
 	bool Opened = false;
 	bool Selected = false;
 	bool IsDanger = false;
 	FString HintText;
-
+	FVector Placement;
 
 
 protected:

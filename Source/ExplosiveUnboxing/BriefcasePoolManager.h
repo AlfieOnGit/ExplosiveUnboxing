@@ -48,7 +48,7 @@ private:
 	AActor* RecycleUnusedBriefCase(const FVector MySpawnPoint, const FRotator MySpawnRot);
 
 	UFUNCTION(BlueprintCallable, Category = "BriefCasePool")
-	UBriefcase* DefineBriefCaseData(AActor* BriefCase, int32 CaseNumber, bool IsDanger, FString HintText);
+	UBriefcase* DefineBriefCaseData(AActor* BriefCase, int32 CaseNumber, bool IsDanger, FString HintText, FVector Placement);
 
 	TArray<AActor*> ActiveBriefCases;
 	std::stack<AActor*> PooledBriefCases;

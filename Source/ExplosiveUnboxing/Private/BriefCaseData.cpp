@@ -23,6 +23,7 @@ UBriefcase* UBriefCaseData::GetCase(int32 CaseNumber) {
 void UBriefCaseData::SetSelectedCase(int32 CaseNumber)
 {
     SelectedCase = CaseNumber; 
+    // if case on table move back to origin
     // Move case to table(); => to be done
 }
 
@@ -39,7 +40,6 @@ int32 UBriefCaseData::GetRandomUnopenedCase()
 
 bool UBriefCaseData::OpenAndCheckCase(int32 CaseNumber) 
 {
-    // Move case to pile(); => to be done
     auto Case = GetCase(CaseNumber);
     HintText = Case->Open();
     SelectedCase = -1;

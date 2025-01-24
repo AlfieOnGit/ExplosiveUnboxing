@@ -47,7 +47,7 @@ TArray<UBriefcase*> UBriefcasePoolManager::SpawnBriefCases(TArray<int32>& CaseNu
         if (MyBriefCase) 
         {
             ActiveBriefCases.Add(MyBriefCase);
-            UBriefcase* MyBriefcaseComponent = DefineBriefCaseData(MyBriefCase, CaseNumbers[i], CaseNumbers[i] == Solution, HintTexts[i]);
+            UBriefcase* MyBriefcaseComponent = DefineBriefCaseData(MyBriefCase, CaseNumbers[i], CaseNumbers[i] == Solution, HintTexts[i], SpawnLocation);
 
             if (MyBriefcaseComponent)
                 BriefCases.Add(MyBriefcaseComponent);
@@ -58,7 +58,7 @@ TArray<UBriefcase*> UBriefcasePoolManager::SpawnBriefCases(TArray<int32>& CaseNu
     return BriefCases;
 }
 
-UBriefcase* UBriefcasePoolManager::DefineBriefCaseData(AActor* BriefCase, int32 CaseNumber, bool IsDanger, FString HintText)
+UBriefcase* UBriefcasePoolManager::DefineBriefCaseData(AActor* BriefCase, int32 CaseNumber, bool IsDanger, FString HintText, FVector Placement)
 {
     if (BriefCase)
     {
@@ -71,7 +71,7 @@ UBriefcase* UBriefcasePoolManager::DefineBriefCaseData(AActor* BriefCase, int32 
             SpriteComponent->SetSprite(BriefcaseSpritesOrdered[0]);
 
         if (BriefCaseComponent){
-            BriefCaseComponent->ResetBriefcase(CaseNumber, IsDanger, HintText);
+            BriefCaseComponent->ResetBriefcase(CaseNumber, IsDanger, HintText, Placement);
             return BriefCaseComponent;
         }
         else {

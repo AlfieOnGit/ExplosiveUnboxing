@@ -89,6 +89,7 @@ protected:
 	int32 FirstSelected;
 	void SetupListeners();
 	void SetDialogue(UInDialogue* dialogue);
+	void SetMenu(bool HasWon);
 
 
 	bool PlayerChoosing = false;

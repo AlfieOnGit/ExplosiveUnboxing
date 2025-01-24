@@ -46,10 +46,25 @@ void  UTurnManager::SetDialogue(UInDialogue* dialogue)
     }
 }
 
+void  UTurnManager::SetMenu(bool HasWon)
+{
+    if (UFunction* TriggerFunction = DialogueManager->FindFunction(TEXT("OpenMenu")))
+    {
+        struct FSetDialogueParams
+        {
+            bool HasWon;
+        };
+
+        uint8* ParamsBuffer = static_cast<uint8*>(FMemory_Alloca(TriggerFunction->ParmsSize));
+        FMemory::Memzero(ParamsBuffer, TriggerFunction->ParmsSize);
+        FSetDialogueParams* Params = reinterpret_cast<FSetDialogueParams*>(ParamsBuffer);
+        Params->HasWon = HasWon;
+        DialogueManager->ProcessEvent(TriggerFunction, ParamsBuffer);
+    }
+}
+
 void UTurnManager::OnCaseClickEventReciever(int32 CaseNumber)
 {
-    UE_LOG(LogTemp, Warning, TEXT("A case has been clciked"));
-
     if (Chosen)
         return;
 
@@ -98,7 +113,7 @@ void UTurnManager::OnSolutionCheckLoopEventReciever()
 }
 
 
-void UTurnManager::OnSolvedEventReciever() {}
+void UTurnManager::OnSolvedEventReciever() { SetMenu(true); }
 
-void UTurnManager::OnGameOverEventReciever() {}
+void UTurnManager::OnGameOverEventReciever() { SetMenu(false); }
 
