@@ -11,7 +11,7 @@ class EXPLOSIVEUNBOXING_API UOnGameEvent : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintCallable, BlueprintReadWrite, Category = "Hints")
+	UPROPERTY(EditAnywhere, BlueprintAssignable, BlueprintCallable, BlueprintReadWrite, Category = "Hints")
 	FOnGameEvent CallEvent;
 
 	UOnGameEvent() = default;
