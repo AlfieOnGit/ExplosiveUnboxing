@@ -5,6 +5,8 @@
 #include "ExplosiveUnboxing/BriefcasePoolManager.h"
 #include "ExplosiveUnboxing/HintManager.h"
 #include "Components/ActorComponent.h"
+#include "OnGameEvent.h"
+
 #include "BriefCaseData.generated.h"
 
 #define MAX_CASES 15
@@ -17,6 +19,9 @@ class EXPLOSIVEUNBOXING_API UBriefCaseData : public UActorComponent
 public:	
 	UBriefCaseData();
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
+	UOnGameEvent* OnCaseOpened;
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	int32 GetSelectedCase() { return SelectedCase; }
@@ -83,6 +88,10 @@ protected:
 
 	TArray<UBriefcase*> Cases;
 	TArray<int32> SelectBriefCaseData(int32 BriefCaseCount);
+	void AddListeners();
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	void SetCaseOpenedSprite();
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	int32 PickSolution(TArray<int32>& CaseNumbers);

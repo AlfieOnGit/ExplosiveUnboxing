@@ -10,6 +10,17 @@ void UBriefCaseData::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+void UBriefCaseData::AddListeners() 
+{
+    if (OnCaseOpened)
+        OnCaseOpened->CallEvent.AddDynamic(this, &UBriefCaseData::SetCaseOpenedSprite);
+}
+
+void UBriefCaseData::SetCaseOpenedSprite()
+{
+    UBriefcase* MyCase = GetCase(OpenedCase);
+    MyCase->SetSpriteOpened();
+}
 
 UBriefcase* UBriefCaseData::GetCase(int32 CaseNumber) {
     for (auto& Case : Cases)
@@ -121,6 +132,7 @@ int32 UBriefCaseData::PickSolution(TArray<int32>& CaseNumbers)
 void UBriefCaseData::BeginPlay()
 {
     Super::BeginPlay();
+    AddListeners();
 
     if (AActor* Owner = GetOwner())
     {

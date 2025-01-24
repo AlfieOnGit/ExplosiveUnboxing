@@ -5,7 +5,7 @@
 #include "Hint.h"
 #include "Engine/DataAsset.h"
 #include "Public/OnCaseEvent.h"
-
+#include "Public/SpriteComponent2D.h"
 #include "GameFramework/Actor.h"
 
 #include "Briefcase.generated.h"
@@ -24,6 +24,9 @@ public:
 		, HintText(MoveTemp(InHintText))		
 		, Placement(InPlacement) {
 	}
+
+	UPROPERTY(EditAnywhere, Category = "Briefcase")
+	UPaperSprite* OpenedSprite;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Briefcases")
 	UOnCaseEvent* OnCaseClickEvent;
@@ -52,6 +55,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	int32 GetCaseNumber() { return Number; }
 
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	void SetSpriteOpened();
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	void ReturnToPlacement() 

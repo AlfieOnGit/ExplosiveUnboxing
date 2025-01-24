@@ -14,6 +14,17 @@ void UBriefcase::OnClick()
 		OnCaseClickEvent->CallEvent.Broadcast(this->Number);
 }
 
+void UBriefcase::SetSpriteOpened() 
+{
+	AActor* Owner = GetOwner();
+	if (Owner) {
+		USpriteComponent2D* SpriteComponent = Owner->FindComponentByClass<USpriteComponent2D>();
+		if (SpriteComponent && OpenedSprite)
+			SpriteComponent->SetSprite(OpenedSprite);
+	}
+
+}
+
 
 void UBriefcase::ResetBriefcase(int32 NewNumber, bool NewIsDanger, FString NewHintText, FVector NewPlacement)
 {
