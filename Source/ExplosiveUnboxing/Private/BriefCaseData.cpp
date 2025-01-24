@@ -136,6 +136,8 @@ void UBriefCaseData::BeginPlay()
         HintTextArray.Add(*Hints.hintText);
     Cases = BriefcasePoolManager->SpawnBriefCases(CaseNumbers, HintTextArray, Solution);
 
-    DebugScenario(CaseNumbers);
-    DebugCaseHints(AllHints);
+    UE_LOG(LogTemp, Warning, TEXT("%d"), Solution);
+
+    //DebugScenario(CaseNumbers);
+    //DebugCaseHints(AllHints);
 }

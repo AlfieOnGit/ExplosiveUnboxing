@@ -11,8 +11,8 @@ enum class OnTableEnd : uint8
     EndDialogue UMETA(DisplayName = "End Dialogue"),
     SwitchByYesNo UMETA(DisplayName = "Switch by Yes or No"),
     SwitchByIsNotGameOver UMETA(DisplayName = "Switch by IsGameOver"),
-    ContinueToFirstOption UMETA(DisplayName = "Continue to first Option")
-
+    ContinueToFirstOption UMETA(DisplayName = "Continue to first Option"),
+    LoopUntilSolution UMETA(DisplayName = "Loop until solution then")
 };
 
 
@@ -37,4 +37,7 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
     UInDialogue* DialogueNoChoice;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+    UInDialogue* DialogueSecretChoice;
 };

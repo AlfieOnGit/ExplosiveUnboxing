@@ -29,7 +29,6 @@ void UTurnManager::SetupListeners()
         OnNPCInteractEvent->CallEvent.AddDynamic(this, &UTurnManager::OnNPCInteractEventReciever);
 }
 
-// Using the cpp interface should also work, but Unity crashes ://
 void  UTurnManager::SetDialogue(UInDialogue* dialogue) 
 {
     if (UFunction* TriggerFunction = DialogueManager->FindFunction(TEXT("SetDialogue")))
@@ -47,15 +46,12 @@ void  UTurnManager::SetDialogue(UInDialogue* dialogue)
     }
 }
 
-
-bool PlayerChoosing = false;
-bool FirstSelect = true;
-bool FirstOpen = true;
-bool FirstInteraction = true;
-
 void UTurnManager::OnCaseClickEventReciever(int32 CaseNumber)
 {
     UE_LOG(LogTemp, Warning, TEXT("A case has been clciked"));
+
+    if (Chosen)
+        return;
 
     if (!PlayerChoosing) {
         if (BriefCaseDataManager->IsSelectedCase(CaseNumber))
@@ -74,6 +70,7 @@ void UTurnManager::OnCaseClickEventReciever(int32 CaseNumber)
     }
     else // The player has chosen a case for solution
     {
+        Chosen = true;
         BriefCaseDataManager->SetChosenCase(CaseNumber);
         int ToOpen = BriefCaseDataManager->GetRandomUnopenedCase();
         BriefCaseDataManager->OpenAndCheckCase(ToOpen);
@@ -94,6 +91,7 @@ void UTurnManager::OnChooseSolutionEventReciever()
 
 void UTurnManager::OnSolutionCheckLoopEventReciever() 
 {
+
     int ToOpen = BriefCaseDataManager->GetRandomUnopenedCase();
     BriefCaseDataManager->OpenAndCheckCase(ToOpen);
     BriefCaseDataManager->IsSolution(ToOpen) ? SetDialogue(OpenCaseLoopFinal) : SetDialogue(OpenCaseLoop);

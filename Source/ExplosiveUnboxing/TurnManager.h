@@ -90,6 +90,13 @@ protected:
 	void SetupListeners();
 	void SetDialogue(UInDialogue* dialogue);
 
+
+	bool PlayerChoosing = false;
+	bool FirstSelect = true;
+	bool Chosen = false;
+	bool FirstOpen = true;
+	bool FirstInteraction = true;
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")

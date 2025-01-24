@@ -36,6 +36,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	bool IsSelectedCase(int32 CaseNumber) { return CaseNumber == SelectedCase; }
 
+
+	UFUNCTION(BlueprintCallable, Category = "Briefcases")
+	bool IsPlayerChosenCase(int32 CaseNumber) { return CaseNumber == PlayerChosenCase; }
+
 	UFUNCTION(BlueprintCallable, Category = "Briefcases")
 	bool OpenAndCheckCase(int32 CaseNumber);
 
